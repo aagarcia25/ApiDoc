@@ -19,9 +19,10 @@ Route::group([
     'prefix' => 'ApiDoc'
 ], function () {
      
-      Route::post('show',              [FilesController::class,'show']);
-      Route::post('create',            [FilesController::class,'create']);
-      Route::post('getByName',         [FilesController::class,'getByName']);
+      Route::post('ListFile',              [FilesController::class,'ListFile']);
+      Route::post('SaveFile',            [FilesController::class,'SaveFile']);
+      Route::post('GetByName',         [FilesController::class,'GetByName']);
+      Route::post('DeleteFile',            [FilesController::class,'DeleteFile']);
       
      /*   Route::prefix('files')->group(function () {
             Route::post('/', [FilesController::class,'index']);
