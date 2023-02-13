@@ -1,0 +1,149 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Documentacion",
+        "contact": {
+            "email": "aagarcia@cecapmex.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://10.200.4.96:81/api/ApiDoc",
+            "description": "Learning env"
+        }
+    ],
+    "paths": {
+        "/index": {
+            "post": {
+                "tags": [
+                    "FilesController"
+                ],
+                "description": "Operaciones",
+                "operationId": "284e6b49a4024a2dfa177e01f7dbd2c7",
+                "parameters": [
+                    {
+                        "name": "ROUTE",
+                        "in": "path",
+                        "description": "Parámetro que indica la ruta donde se almacenara el archivo",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "string": {
+                                "summary": "Introduce la Ruta para almacenar el archivo",
+                                "value": "/"
+                            }
+                        }
+                    },
+                    {
+                        "name": "Nombre",
+                        "in": "path",
+                        "description": "Parámetro que indica el nombre del archivo",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "string": {
+                                "summary": "Introduce el nombre del archivo",
+                                "value": "foto.png"
+                            }
+                        }
+                    },
+                    {
+                        "name": "APP",
+                        "in": "path",
+                        "description": "Parámetro que indica la aplicacion de donde se manda a llamar",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "string": {
+                                "summary": "Introduce el identificador de la APP",
+                                "value": "PDRMYE"
+                            }
+                        }
+                    },
+                    {
+                        "name": "FILE",
+                        "in": "path",
+                        "description": "Parámetro que indica el archivo a guardar",
+                        "required": true,
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Display a listing of projects."
+                    }
+                }
+            }
+        },
+        "/show": {
+            "post": {
+                "tags": [
+                    "FilesController"
+                ],
+                "description": "Operaciones",
+                "operationId": "17e3eb2adfc7907abc06d9c43e7c39a4",
+                "parameters": [
+                    {
+                        "name": "ROUTE",
+                        "in": "path",
+                        "description": "Parámetro que indica la ruta donde se almacenara el archivo",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "string": {
+                                "summary": "Introduce la Ruta para almacenar el archivo",
+                                "value": "/"
+                            }
+                        }
+                    },
+                    {
+                        "name": "Nombre",
+                        "in": "path",
+                        "description": "Parámetro que indica el nombre del archivo",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "string": {
+                                "summary": "Introduce el nombre del archivo",
+                                "value": "foto.png"
+                            }
+                        }
+                    },
+                    {
+                        "name": "APP",
+                        "in": "path",
+                        "description": "Parámetro que indica la aplicacion de donde se manda a llamar",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "string": {
+                                "summary": "Introduce el identificador de la APP",
+                                "value": "PDRMYE"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Display a listing of projects."
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FilesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,20 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group([
+    'prefix' => 'ApiDoc'
+], function () {
+     
+      Route::post('show',              [FilesController::class,'show']);
+      Route::post('create',            [FilesController::class,'create']);
+      Route::post('getByName',         [FilesController::class,'getByName']);
+      
+     /*   Route::prefix('files')->group(function () {
+            Route::post('/', [FilesController::class,'index']);
+            Route::post('store',[FilesController::class,'store']);
+            Route::post('update',[FilesController::class,'update']);
+            Route::post('show',[FilesController::class,'show']);
+            Route::post('destroy',[FilesController::class,'destroy']);
+        });*/
+
 });
