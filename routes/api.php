@@ -24,12 +24,5 @@ Route::group([
       Route::post('GetByName',         [FilesController::class,'GetByName']);
       Route::post('DeleteFile',            [FilesController::class,'DeleteFile']);
       
-     /*   Route::prefix('files')->group(function () {
-            Route::post('/', [FilesController::class,'index']);
-            Route::post('store',[FilesController::class,'store']);
-            Route::post('update',[FilesController::class,'update']);
-            Route::post('show',[FilesController::class,'show']);
-            Route::post('destroy',[FilesController::class,'destroy']);
-        });*/
-
+     
 });

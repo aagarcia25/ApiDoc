@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use stdClass;
@@ -27,11 +28,13 @@ class FilesController extends Controller
         $fileContents = request()->file('FILE');
         $ruta =   $request->ROUTE;
         if($fileContents != null){
-            $nombre = $fileContents->getClientOriginalName();
-           // $fileContents->storeAs($ruta, $nombre);
+            $prexi = Carbon::now();
+            $nombre =  $prexi.$fileContents->getClientOriginalName();
+            $fileContents->storeAs($ruta, $nombre);
             $obj = new stdClass();
             $obj->RUTA = Storage::disk('ftp')->path($ruta.$nombre);
-           
+            $obj->NOMBREIDENTIFICADOR = $nombre;
+            $obj->NOMBREARCHIVO = $fileContents->getClientOriginalName();
         }
       
         $response  = $obj;
@@ -167,7 +170,9 @@ class FilesController extends Controller
             $obj = new stdClass();
             $atachment = Storage::download($ruta.$nombre);
             $obj->NOMBRE=$nombre;
-            $obj->FILE= base64_encode($atachment);
+            $obj->TIPO = Storage::mimeType($ruta.$nombre);
+            $obj->SIZE = Storage::size($ruta.$nombre);
+            $obj->FILE = ($atachment);
         }
       
         $response  = $obj;
