@@ -24,20 +24,28 @@ class FilesController extends Controller
         $response = "";
 
         try {
-            
-        $fileContents = request()->file('FILE');
-        $ruta =   $request->ROUTE;
-        if($fileContents != null){
-            $prexi = Carbon::now();
-            $nombre =  $prexi.$fileContents->getClientOriginalName();
-            $fileContents->storeAs($ruta, $nombre);
-            $obj = new stdClass();
-            $obj->RUTA = Storage::disk('ftp')->path($ruta.$nombre);
-            $obj->NOMBREIDENTIFICADOR = $nombre;
-            $obj->NOMBREARCHIVO = $fileContents->getClientOriginalName();
+         $ruta =   $request->ROUTE;
+         $existe = Storage::exists($ruta);  
+         $obj = new stdClass(); 
+        if ($existe){
+
+            $fileContents = request()->file('FILE');
+       
+            if($fileContents != null){
+                $prexi = Carbon::now();
+                $nombre =  $prexi.$fileContents->getClientOriginalName();
+                $fileContents->storeAs($ruta, $nombre);
+                $obj->RUTA = Storage::disk('ftp')->path($ruta.$nombre);
+                $obj->NOMBREIDENTIFICADOR = $nombre;
+                $obj->NOMBREARCHIVO = $fileContents->getClientOriginalName();
+            }
+      
+            $response  = $obj;
+        }else{
+            $response = "No Existe la Ruta Indicada";
         }
       
-        $response  = $obj;
+      
 
     } catch (\Exception $e) {
         $NUMCODE = 1;
@@ -89,8 +97,7 @@ class FilesController extends Controller
      *     @OA\Response(response="200", description="Display a listing of projects.")
      * )
      */
-    public function ListFile(Request $request)
-    {
+    public function ListFile(Request $request){
         $SUCCESS = true;
         $NUMCODE = 0;
         $STRMESSAGE = 'Exito';
@@ -99,11 +106,14 @@ class FilesController extends Controller
     try {
             
         $ruta = $request->ROUTE;
-      
+        $existe = Storage::exists($ruta);  
+        if ($existe){
         if($ruta != null){
             $response = Storage::files($ruta);
         }
-
+       }else{
+        $response = "No Existe la Ruta Indicada";
+      }
        } catch (\Exception $e) {
         $NUMCODE = 1;
         $STRMESSAGE = $e->getMessage();
@@ -168,11 +178,11 @@ class FilesController extends Controller
         $ruta   =   $request->ROUTE;
         if($nombre != null){
             $obj = new stdClass();
-            $atachment = Storage::download($ruta.$nombre);
+            $atachment = Storage::disk('ftp')->get($ruta.$nombre);
             $obj->NOMBRE=$nombre;
             $obj->TIPO = Storage::mimeType($ruta.$nombre);
             $obj->SIZE = Storage::size($ruta.$nombre);
-            $obj->FILE = ($atachment);
+            $obj->FILE = base64_encode($atachment); 
         }
       
         $response  = $obj;
