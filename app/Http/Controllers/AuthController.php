@@ -14,11 +14,10 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         //Indicamos que solo queremos recibir name, email y password de la request
-        $data = $request->only('name', 'email', 'password');
+        $data = $request->only('name',  'password');
         //Realizamos las validaciones
         $validator = Validator::make($data, [
             'name' => 'required|string',
-            'email' => 'required|email|unique:users',
             'password' => 'required|string|min:6|max:50',
         ]);
         //Devolvemos un error si fallan las validaciones
@@ -28,11 +27,10 @@ class AuthController extends Controller
         //Creamos el nuevo usuario
         $user = User::create([
             'name' => $request->name,
-            'email' => $request->email,
             'password' => bcrypt($request->password)
         ]);
         //Nos guardamos el usuario y la contraseña para realizar la petición de token a JWTAuth
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->only('name', 'password');
         //Devolvemos la respuesta con el token del usuario
         return response()->json([
             'message' => 'User created',
@@ -71,7 +69,6 @@ class AuthController extends Controller
         //Devolvemos el token
         return response()->json([
             'token' => $token,
-           // 'user' => Auth::user()
         ]);
     }
 
@@ -80,7 +77,7 @@ class AuthController extends Controller
         try {
           //Devolvemos el token
           return response()->json([
-            'token' => $this->respondWithToken(auth()->refresh())
+            'token' => auth()->refresh(true, true)
         ]);
     } catch (JWTException $e) {
         //Error chungo
@@ -92,15 +89,6 @@ class AuthController extends Controller
     //Función que utilizaremos para eliminar el token y desconectar al usuario
     public function logout(Request $request)
     {
-        //Validamos que se nos envie el token
-       /* $validator = Validator::make($request->only('token'), [
-            'token' => 'required'
-        ]);
-       
-        //Si falla la validación
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 400);
-        }*/
 
         $token = $request->header('Authorization');
         try {
@@ -136,4 +124,5 @@ class AuthController extends Controller
         //Devolvemos los datos del usuario si todo va bien. 
         return response()->json(['user' => $user]);
     }
+
 }
