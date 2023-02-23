@@ -104,7 +104,8 @@ class FilesController extends Controller
         $response = "";
 
     try {
-            
+
+
         $ruta = $request->ROUTE;
         $existe = Storage::exists($ruta);  
         if ($existe){
@@ -114,11 +115,16 @@ class FilesController extends Controller
        }else{
         $response = "No Existe la Ruta Indicada";
       }
+
+
+
        } catch (\Exception $e) {
         $NUMCODE = 1;
         $STRMESSAGE = $e->getMessage();
         $SUCCESS = false;
       }
+
+
 
     return response()->json(
         [
@@ -128,6 +134,9 @@ class FilesController extends Controller
             'SUCCESS' => $SUCCESS
         ]
     );
+
+
+
     }
 
   

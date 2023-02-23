@@ -1,10 +1,12 @@
 <?php
 namespace App\Http\Middleware;
 use Closure;
-use JWTAuth;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use Exception;
 use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 class JwtMiddlware
 {
     /**
@@ -16,17 +18,49 @@ class JwtMiddlware
      */
     public function handle(Request $request, Closure $next)
     {
-        try {
-            $user = JWTAuth::parseToken()->authenticate();
-        } catch (Exception $e) {
-            if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
-                return response()->json(['status' => 'Token is Invalid'], 401);
-            } else if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
-                return response()->json(['status' => 'Token is Expired'], 401);
-            } else {
-                return response()->json(['status' => 'Authorization Token not found' , 'Error'=> $e], 401);
+
+      
+            // attempt to verify the credentials and create a token for the user
+            $token = $request->header('Authorization');
+            if($token){
+                $decoded = (json_decode(base64_decode(str_replace('_', '/', str_replace('-','+',explode('.', $token)[1])))));
+                $decoded_array = (array) $decoded;
+                $nombreUsuario= ($decoded_array['NombreUsuario']);
+                $idusuario=     ($decoded_array['IdUsuario']);
+                $iat=           ($decoded_array['iat']);
+                $exp =          ($decoded_array['exp']);
+                $date = time();
+                $f1=date("Y-m-d (H:i:s)", $date);
+                $f2=date("Y-m-d (H:i:s)", $exp);
+                $tokenvalido=$f1 > $f2;
+               
+                if(!$tokenvalido){
+                    return $next($request);
+                }else{
+                    return response()->json(['status' => 'Token Expirado'], 401);
+                }
+    
+    
+    /*
+                print_r($decoded_array['NombreUsuario']);
+                print_r($decoded_array['IdUsuario']);
+                print_r($decoded_array['iat']);
+                print_r($decoded_array['exp']);*/
+    
+    
+               //  $TokenValido= ((( number_format($decoded_array['exp'])  - (Carbon::now() / 1000)) / 60)) ;
+              
+
+
+
+            }else{
+                return response()->json(['status' => 'Authorization Token not found'], 401);
             }
-        }
-        return $next($request);
+           
+
+            
+
+
+        
     }
 }
