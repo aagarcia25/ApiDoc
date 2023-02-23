@@ -7,6 +7,8 @@ use Exception;
 use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use DB;
+
 class JwtMiddlware
 {
     /**
@@ -26,7 +28,7 @@ class JwtMiddlware
                 $decoded = (json_decode(base64_decode(str_replace('_', '/', str_replace('-','+',explode('.', $token)[1])))));
                 $decoded_array = (array) $decoded;
                 $nombreUsuario= ($decoded_array['NombreUsuario']);
-                $idusuario=     ($decoded_array['IdUsuario']);
+                $idusuario=     (trim($decoded_array['IdUsuario']));
                 $iat=           ($decoded_array['iat']);
                 $exp =          ($decoded_array['exp']);
                 $date = time();
@@ -35,7 +37,12 @@ class JwtMiddlware
                 $tokenvalido=$f1 > $f2;
                
                 if(!$tokenvalido){
-                    return $next($request);
+                    if($this->checkUser($idusuario)){
+                        return $next($request);
+                    }else{
+                        return response()->json(['status' => 'Usuario no Existe'], 401);
+                    }
+                   
                 }else{
                     return response()->json(['status' => 'Token Expirado'], 401);
                 }
@@ -63,4 +70,19 @@ class JwtMiddlware
 
         
     }
+
+    public function checkUser($id){
+        $response = "";
+        try{
+            $response = DB::select(DB::raw(" SELECT  u.Id   FROM      TiCentral.Usuarios u   WHERE  u.Id='".$id."'"));
+            $response[0]->Id;
+            $response = true;
+        } catch (\Exception $e) {
+            $response = false;
+        }
+      
+        return  $response;
+     }
+
+
 }
