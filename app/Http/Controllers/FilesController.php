@@ -7,10 +7,12 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use stdClass;
+use League\Flysystem\Ftp\FtpAdapter;
+
 
 class FilesController extends Controller
 {
-   
+
 
     /**
      * Show the form for creating a new resource.
@@ -18,52 +20,55 @@ class FilesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function SaveFile(Request $request) {
-        $SUCCESS = true;
         $NUMCODE = 0;
         $STRMESSAGE = 'Exito';
         $response = "";
 
         try {
-         $ruta =   $request->ROUTE;
-         $existe = Storage::exists($ruta);  
-         $obj = new stdClass(); 
-        if ($existe){
-
+            $ruta = $request->ROUTE;
             $fileContents = request()->file('FILE');
-       
-            if($fileContents != null){
-                $prexi = Carbon::now();
-                $nombre =  $prexi.$fileContents->getClientOriginalName();
-                $fileContents->storeAs($ruta, $nombre);
-                $obj->RUTA = Storage::disk('ftp')->path($ruta.$nombre);
-                $obj->NOMBREIDENTIFICADOR = $nombre;
-                $obj->NOMBREARCHIVO = $fileContents->getClientOriginalName();
+            $obj = new stdClass();
+
+            if (!$ruta) {
+                return response()->json([
+                    'NUMCODE' => 1,
+                    'STRMESSAGE' => 'No se proporcionó una ruta válida',
+                    'SUCCESS' => false
+                ]);
             }
-      
-            $response  = $obj;
-        }else{
-            $response = "No Existe la Ruta Indicada";
+
+            if (!$fileContents) {
+                return response()->json([
+                    'NUMCODE' => 1,
+                    'STRMESSAGE' => 'No se proporcionó un archivo válido',
+                    'SUCCESS' => false
+                ]);
+            }
+
+            $prexi = Carbon::now();
+            $nombre = $prexi.$fileContents->getClientOriginalName();
+            $filePath = $ruta.$nombre;
+            $disk = Storage::disk('ftp');
+            $disk->put($filePath, $fileContents);
+
+            $obj->RUTA = $disk->url($filePath);
+            $obj->NOMBREIDENTIFICADOR = $nombre;
+            $obj->NOMBREARCHIVO = $fileContents->getClientOriginalName();
+            $response = $obj;
+        } catch (\Exception $e) {
+            $NUMCODE = 1;
+            $STRMESSAGE = $e->getMessage();
         }
-      
-      
 
-    } catch (\Exception $e) {
-        $NUMCODE = 1;
-        $STRMESSAGE = $e->getMessage();
-        $SUCCESS = false;
-    }
-
-    return response()->json(
-        [
+        return response()->json([
             'NUMCODE' => $NUMCODE,
             'STRMESSAGE' => $STRMESSAGE,
             'RESPONSE' => $response,
-            'SUCCESS' => $SUCCESS
-        ]
-    );
+            'SUCCESS' => $NUMCODE === 0
+        ]);
     }
 
-  
+
 
    /**
      * @OA\Post(
@@ -107,7 +112,7 @@ class FilesController extends Controller
 
 
         $ruta = $request->ROUTE;
-        $existe = Storage::exists($ruta);  
+        $existe = Storage::exists($ruta);
         if ($existe){
         if($ruta != null){
             $response = Storage::files($ruta);
@@ -139,9 +144,9 @@ class FilesController extends Controller
 
     }
 
-  
 
-    
+
+
 
     public function DeleteFile(Request $request)
     {
@@ -156,7 +161,7 @@ class FilesController extends Controller
         if($nombre != null){
             Storage::delete($ruta.$nombre);
         }
-      
+
 
     } catch (\Exception $e) {
         $response ="Error al Eliminar Archivo" ;
@@ -191,9 +196,9 @@ class FilesController extends Controller
             $obj->NOMBRE=$nombre;
             $obj->TIPO = Storage::mimeType($ruta.$nombre);
             $obj->SIZE = Storage::size($ruta.$nombre);
-            $obj->FILE = base64_encode($atachment); 
+            $obj->FILE = base64_encode($atachment);
         }
-      
+
         $response  = $obj;
 
     } catch (\Exception $e) {
