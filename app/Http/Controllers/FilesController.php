@@ -34,12 +34,14 @@ class FilesController extends Controller
             if($fileContents != null){
                 $prexi = Carbon::now();
                 $nombre =  $prexi.$fileContents->getClientOriginalName();
+              
                 $fileContents->storeAs($ruta, $nombre);
                 $obj->RUTA = Storage::disk('ftp')->path($ruta.$nombre);
                 $obj->NOMBREIDENTIFICADOR = $nombre;
                 $obj->NOMBREARCHIVO = $fileContents->getClientOriginalName();
+              //  var_dump($obj);
             }
-      
+            
             $response  = $obj;
         }else{
             $response = "No Existe la Ruta Indicada";

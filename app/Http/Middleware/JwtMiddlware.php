@@ -40,28 +40,32 @@ class JwtMiddlware
                     if($this->checkUser($idusuario)){
                         return $next($request);
                     }else{
-                        return response()->json(['status' => 'Usuario no Existe'], 401);
+
+                        return response()->json([
+                            'NUMCODE' => -1,
+                            'STRMESSAGE' =>'Usuario no Existe',
+                            'RESPONSE' => [],
+                            'SUCCESS' => false
+                        ],401);
                     }
                    
                 }else{
-                    return response()->json(['status' => 'Token Expirado'], 401);
+
+                    return response()->json([
+                        'NUMCODE' => -1,
+                        'STRMESSAGE' =>'Token Expirado',
+                        'RESPONSE' => [],
+                        'SUCCESS' => false
+                    ],401);
                 }
-    
-    
-    /*
-                print_r($decoded_array['NombreUsuario']);
-                print_r($decoded_array['IdUsuario']);
-                print_r($decoded_array['iat']);
-                print_r($decoded_array['exp']);*/
-    
-    
-               //  $TokenValido= ((( number_format($decoded_array['exp'])  - (Carbon::now() / 1000)) / 60)) ;
-              
-
-
 
             }else{
-                return response()->json(['status' => 'Authorization Token not found'], 401);
+                return response()->json([
+                    'NUMCODE' => -1,
+                    'STRMESSAGE' =>'Authorization Token not found',
+                    'RESPONSE' => [],
+                    'SUCCESS' => false
+                ],401);
             }
            
 
