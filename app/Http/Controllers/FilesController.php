@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use stdClass;
@@ -45,6 +46,7 @@ class FilesController extends Controller
             $response  = $obj;
         }else{
             $response = "No Existe la Ruta Indicada";
+            throw new Exception( $response);
         }
       
       
@@ -116,6 +118,7 @@ class FilesController extends Controller
         }
        }else{
         $response = "No Existe la Ruta Indicada";
+        throw new Exception( $response);
       }
 
 
