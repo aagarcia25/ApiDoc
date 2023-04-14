@@ -58,9 +58,9 @@ return [
 
         'ftp' => [
             'driver' => 'ftp',
-            'host' => 'ftp.dlptest.com',
-            'username' => 'dlpuser',
-            'password' => 'rNrKYTX9g7z3RgJRmxWuGHbeu',
+            'host' => '10.210.0.30',
+            'username' => 'admin',
+            'password' => 'password',
 
             // Optional FTP Settings...
             'port' => 21,

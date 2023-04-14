@@ -4,7 +4,8 @@ COPY *.json ./
 COPY artisan ./
 COPY . .
 RUN composer install
-RUN cp .env .env
+RUN composer require league/flysystem-ftp
+RUN cp .env.example .env
 RUN php artisan key:generate
 RUN chown -R 775 public
 RUN chown -R apache.apache public

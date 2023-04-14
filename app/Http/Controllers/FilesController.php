@@ -144,6 +144,37 @@ class FilesController extends Controller
 
     }
 
+    public function listAll(Request $request) {
+        $SUCCESS = true;
+        $NUMCODE = 0;
+        $STRMESSAGE = 'Success';
+        $response = [];
+    
+        try {
+            $route = $request->route;
+            $path = public_path($route);
+    
+            if (is_dir($path)) {
+                $files = scandir($path);
+                $response = array_diff($files, array('.', '..'));
+            } else {
+                $response = 'The specified route does not exist';
+            }
+        } catch (\Exception $e) {
+            $NUMCODE = 1;
+            $STRMESSAGE = $e->getMessage();
+            $SUCCESS = false;
+        }
+    
+        return response()->json([
+            'NUMCODE' => $NUMCODE,
+            'STRMESSAGE' => $STRMESSAGE,
+            'RESPONSE' => $response,
+            'SUCCESS' => $SUCCESS
+        ]);
+    }
+    
+
 
 
 
