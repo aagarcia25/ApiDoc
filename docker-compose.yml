@@ -12,5 +12,12 @@ services:
             DB_PASSWORD: "mypass"
             JWT_SECRET: "2A95F5CCD11DE255FEE9451BDE433"
         ports:
-            - 8081:80
-        restart: always
+            - 8082:80
+        volumes:
+            - .:/var/www/html
+            - /var/www/html/vendor
+            - /var/www/html/public
+            - /var/www/html/storage
+            - /var/www/html/bootstrap
+volumes:
+    app-docs:
