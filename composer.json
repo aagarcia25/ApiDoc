@@ -12,6 +12,7 @@
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
         "league/flysystem": "^3.14",
+        "league/flysystem-ftp": "^3.13",
         "php-open-source-saver/jwt-auth": "^2.0"
     },
     "require-dev": {
