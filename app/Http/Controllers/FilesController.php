@@ -11,7 +11,7 @@ use stdClass;
 
 class FilesController extends Controller
 {
-   
+
 
     /**
      * Show the form for creating a new resource.
@@ -26,30 +26,30 @@ class FilesController extends Controller
 
         try {
          $ruta =   $request->ROUTE;
-         $existe = Storage::exists($ruta);  
-         $obj = new stdClass(); 
+         $existe = Storage::exists($ruta);
+         $obj = new stdClass();
         if ($existe){
 
             $fileContents = request()->file('FILE');
-       
+
             if($fileContents != null){
                 $prexi = Carbon::now();
                 $nombre =  $prexi.$fileContents->getClientOriginalName();
-              
+
                 $fileContents->storeAs($ruta, $nombre);
                 $obj->RUTA = Storage::disk('ftp')->path($ruta.$nombre);
                 $obj->NOMBREIDENTIFICADOR = $nombre;
                 $obj->NOMBREARCHIVO = $fileContents->getClientOriginalName();
               //  var_dump($obj);
             }
-            
+
             $response  = $obj;
         }else{
             $response = "No Existe la Ruta Indicada";
             throw new Exception( $response);
         }
-      
-      
+
+
 
     } catch (\Exception $e) {
         $NUMCODE = 1;
@@ -67,7 +67,7 @@ class FilesController extends Controller
     );
     }
 
-  
+
 
    /**
      * @OA\Post(
@@ -111,7 +111,7 @@ class FilesController extends Controller
 
 
         $ruta = $request->ROUTE;
-        $existe = Storage::exists($ruta);  
+        $existe = Storage::exists($ruta);
         if ($existe){
         if($ruta != null){
             $response = Storage::files($ruta);
@@ -144,9 +144,9 @@ class FilesController extends Controller
 
     }
 
-  
 
-    
+
+
 
     public function DeleteFile(Request $request)
     {
@@ -161,7 +161,7 @@ class FilesController extends Controller
         if($nombre != null){
             Storage::delete($ruta.$nombre);
         }
-      
+
 
     } catch (\Exception $e) {
         $response ="Error al Eliminar Archivo" ;
@@ -196,9 +196,9 @@ class FilesController extends Controller
             $obj->NOMBRE=$nombre;
             $obj->TIPO = Storage::mimeType($ruta.$nombre);
             $obj->SIZE = Storage::size($ruta.$nombre);
-            $obj->FILE = base64_encode($atachment); 
+            $obj->FILE = base64_encode($atachment);
         }
-      
+
         $response  = $obj;
 
     } catch (\Exception $e) {
