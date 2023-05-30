@@ -26,7 +26,17 @@ class FilesController extends Controller
 
         try {
          $ruta =   $request->ROUTE;
-         $existe = Storage::exists($ruta);
+
+         if (strtoupper($request->ADDROUTE) === 'TRUE'){ 
+            $existe = Storage::exists($ruta);
+            if(!$existe){
+               Storage::makeDirectory($ruta);
+            }
+          
+          }
+
+          $existe = Storage::exists($ruta);
+
          $obj = new stdClass();
         if ($existe){
 
