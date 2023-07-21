@@ -21,18 +21,18 @@ class JwtMiddlware
         try {
 
             // attempt to verify the credentials and create a token for the user
-         //   $token = $request->header('Authorization');
-        //    $res = $this->validatoken($token);
-         //   if($res === 200){
-             return $next($request);
-         //   }else{
-                    // return response()->json([
-                    // 'NUMCODE' => -1,
-                    // 'STRMESSAGE' =>'Token Invalido',
-                    // 'RESPONSE' => [],
-                    // 'SUCCESS' => false
-                    //  ],401);
-          //  }
+            $token = $request->header('Authorization');
+            $res = $this->validatoken($token);
+            if($res === 200){
+              return $next($request);
+            }else{
+                    return response()->json([
+                    'NUMCODE' => -1,
+                    'STRMESSAGE' =>'Token Invalido',
+                    'RESPONSE' => [],
+                    'SUCCESS' => false
+                     ],401);
+            }
 
          } catch (\Exception $e) {
                    return response()->json([
