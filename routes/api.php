@@ -25,6 +25,8 @@ Route::prefix('ApiDoc')->group(function () {
         Route::post('SaveFile',           [FilesController::class,'SaveFile']);
         Route::post('GetByName',          [FilesController::class,'GetByName']);
         Route::post('DeleteFile',         [FilesController::class,'DeleteFile']);
+        Route::post('GetByRoute',         [FilesController::class,'GetByRoute']);
+        
     });
 });
 
