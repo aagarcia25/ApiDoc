@@ -227,5 +227,69 @@ class FilesController extends Controller
     );
     }
 
+    public function GetByRoute(Request $request)
+    {
+        $SUCCESS = true;
+        $NUMCODE = 0;
+        $STRMESSAGE = 'Exito';
+        $response = "";
+
+        try {
+    
+        $ruta   =   $request->ROUTE;
+       
+        $obj = new stdClass();
+        $atachment = Storage::disk('ftp')->get($ruta);
+        $obj->TIPO = Storage::mimeType($ruta);
+        $obj->SIZE = Storage::size($ruta);
+        $obj->FILE = base64_encode($atachment);
+        $response  = $obj;
+
+    } catch (\Exception $e) {
+        $NUMCODE = 1;
+        $STRMESSAGE = $e->getMessage();
+        $SUCCESS = false;
+    }
+
+   return response()->json(
+        [
+            'NUMCODE' => $NUMCODE,
+            'STRMESSAGE' => $STRMESSAGE,
+            'RESPONSE' => $response,
+            'SUCCESS' => $SUCCESS
+        ]
+    );
+    }
+
+    public function DeleteFileByRoute(Request $request)
+    {
+        $SUCCESS = true;
+        $NUMCODE = 0;
+        $STRMESSAGE = 'Exito';
+        $response = "Archivo Eliminado";
+
+        try {
+        $ruta   =   $request->ROUTE;
+        if($ruta != null){
+            Storage::delete($ruta);
+        }
+
+
+    } catch (\Exception $e) {
+        $response ="Error al Eliminar Archivo" ;
+        $NUMCODE = 1;
+        $STRMESSAGE = $e->getMessage();
+        $SUCCESS = false;
+    }
+
+   return response()->json(
+        [
+            'NUMCODE' => $NUMCODE,
+            'STRMESSAGE' => $STRMESSAGE,
+            'RESPONSE' => $response,
+            'SUCCESS' => $SUCCESS
+        ]
+    );
+    }
 
 }
