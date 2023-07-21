@@ -46,8 +46,8 @@ class FilesController extends Controller
                 $prexi = Carbon::now();
                 $nombre =  $prexi.$fileContents->getClientOriginalName();
 
-                $fileContents->storeAs($ruta, $nombre);
-                $obj->RUTA = Storage::disk('ftp')->path($ruta.$nombre);
+                $path = $fileContents->storeAs($ruta, $nombre);
+                $obj->RUTA = $path ; //Storage::disk('ftp')->path($ruta.$nombre);
                 $obj->NOMBREIDENTIFICADOR = $nombre;
                 $obj->NOMBREARCHIVO = $fileContents->getClientOriginalName();
               //  var_dump($obj);
