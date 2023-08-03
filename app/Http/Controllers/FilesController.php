@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use stdClass;
 
 class FilesController extends Controller
 {
-   
+
 
     /**
      * Show the form for creating a new resource.
@@ -25,27 +26,40 @@ class FilesController extends Controller
 
         try {
          $ruta =   $request->ROUTE;
-         $existe = Storage::exists($ruta);  
-         $obj = new stdClass(); 
+
+         if (strtoupper($request->ADDROUTE) === 'TRUE'){ 
+            $existe = Storage::exists($ruta);
+            if(!$existe){
+               Storage::makeDirectory($ruta);
+            }
+          
+          }
+
+          $existe = Storage::exists($ruta);
+
+         $obj = new stdClass();
         if ($existe){
 
             $fileContents = request()->file('FILE');
-       
+
             if($fileContents != null){
                 $prexi = Carbon::now();
                 $nombre =  $prexi.$fileContents->getClientOriginalName();
-                $fileContents->storeAs($ruta, $nombre);
-                $obj->RUTA = Storage::disk('ftp')->path($ruta.$nombre);
+
+                $path = $fileContents->storeAs($ruta, $nombre);
+                $obj->RUTA = $path ; //Storage::disk('ftp')->path($ruta.$nombre);
                 $obj->NOMBREIDENTIFICADOR = $nombre;
                 $obj->NOMBREARCHIVO = $fileContents->getClientOriginalName();
+              //  var_dump($obj);
             }
-      
+
             $response  = $obj;
         }else{
             $response = "No Existe la Ruta Indicada";
+            throw new Exception( $response);
         }
-      
-      
+
+
 
     } catch (\Exception $e) {
         $NUMCODE = 1;
@@ -63,7 +77,7 @@ class FilesController extends Controller
     );
     }
 
-  
+
 
    /**
      * @OA\Post(
@@ -107,13 +121,14 @@ class FilesController extends Controller
 
 
         $ruta = $request->ROUTE;
-        $existe = Storage::exists($ruta);  
+        $existe = Storage::exists($ruta);
         if ($existe){
         if($ruta != null){
             $response = Storage::files($ruta);
         }
        }else{
         $response = "No Existe la Ruta Indicada";
+        throw new Exception( $response);
       }
 
 
@@ -139,9 +154,9 @@ class FilesController extends Controller
 
     }
 
-  
 
-    
+
+
 
     public function DeleteFile(Request $request)
     {
@@ -156,7 +171,7 @@ class FilesController extends Controller
         if($nombre != null){
             Storage::delete($ruta.$nombre);
         }
-      
+
 
     } catch (\Exception $e) {
         $response ="Error al Eliminar Archivo" ;
@@ -191,9 +206,9 @@ class FilesController extends Controller
             $obj->NOMBRE=$nombre;
             $obj->TIPO = Storage::mimeType($ruta.$nombre);
             $obj->SIZE = Storage::size($ruta.$nombre);
-            $obj->FILE = base64_encode($atachment); 
+            $obj->FILE = base64_encode($atachment);
         }
-      
+
         $response  = $obj;
 
     } catch (\Exception $e) {
@@ -212,5 +227,69 @@ class FilesController extends Controller
     );
     }
 
+    public function GetByRoute(Request $request)
+    {
+        $SUCCESS = true;
+        $NUMCODE = 0;
+        $STRMESSAGE = 'Exito';
+        $response = "";
+
+        try {
+    
+        $ruta   =   $request->ROUTE;
+       
+        $obj = new stdClass();
+        $atachment = Storage::disk('ftp')->get($ruta);
+        $obj->TIPO = Storage::mimeType($ruta);
+        $obj->SIZE = Storage::size($ruta);
+        $obj->FILE = base64_encode($atachment);
+        $response  = $obj;
+
+    } catch (\Exception $e) {
+        $NUMCODE = 1;
+        $STRMESSAGE = $e->getMessage();
+        $SUCCESS = false;
+    }
+
+   return response()->json(
+        [
+            'NUMCODE' => $NUMCODE,
+            'STRMESSAGE' => $STRMESSAGE,
+            'RESPONSE' => $response,
+            'SUCCESS' => $SUCCESS
+        ]
+    );
+    }
+
+    public function DeleteFileByRoute(Request $request)
+    {
+        $SUCCESS = true;
+        $NUMCODE = 0;
+        $STRMESSAGE = 'Exito';
+        $response = "Archivo Eliminado";
+
+        try {
+        $ruta   =   $request->ROUTE;
+        if($ruta != null){
+            Storage::delete($ruta);
+        }
+
+
+    } catch (\Exception $e) {
+        $response ="Error al Eliminar Archivo" ;
+        $NUMCODE = 1;
+        $STRMESSAGE = $e->getMessage();
+        $SUCCESS = false;
+    }
+
+   return response()->json(
+        [
+            'NUMCODE' => $NUMCODE,
+            'STRMESSAGE' => $STRMESSAGE,
+            'RESPONSE' => $response,
+            'SUCCESS' => $SUCCESS
+        ]
+    );
+    }
 
 }
