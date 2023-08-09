@@ -4,7 +4,9 @@ COPY *.json ./
 COPY artisan ./
 COPY . .
 RUN composer install
-RUN composer require league/flysystem-ftp
+#ENV COMPOSER_ALLOW_SUPERUSER=1
+#RUN composer require league/flysystem
+#RUN composer require league/flysystem-ftp
 RUN cp .env.example .env
 RUN php artisan key:generate
 RUN chown -R 775 public

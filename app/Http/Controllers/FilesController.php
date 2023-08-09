@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use stdClass;
 use League\Flysystem\Ftp\FtpAdapter;
+use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+
 
 
 class FilesController extends Controller
@@ -19,89 +22,65 @@ class FilesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function SaveFile(Request $request) {
-        $NUMCODE = 0;
-        $STRMESSAGE = 'Exito';
-        $response = "";
-
+    public function saveFile(Request $request)
+    {
         try {
+            $messages = [
+                'required' => 'El campo :attribute es requerido.',
+                'file' => 'El campo :attribute debe ser un archivo.',
+            ];
+
+            // Valida los datos del request con los mensajes personalizados
+            $validator = Validator::make($request->all(), [
+                'ROUTE' => 'required',
+                'FILE' => 'required|file',
+            ], $messages);
+
+            if ($validator->fails()) {
+                // Obtiene los mensajes de error
+                $errors = $validator->errors();
+
+                // Puedes retornar los mensajes de error en la respuesta JSON
+                return response()->json([
+                    'NUMCODE' => 1,
+                    'STRMESSAGE' => 'Error en la validación',
+                    'ERRORS' => $errors->all(),
+                    'SUCCESS' => false,
+                ], 422); // Código de estado HTTP 422 Unprocessable Entity
+
+                // También puedes lanzar una excepción para que Laravel maneje automáticamente los errores
+                // throw new \Illuminate\Validation\ValidationException($validator);
+            }
+
             $ruta = $request->ROUTE;
-            $fileContents = request()->file('FILE');
-            $obj = new stdClass();
+            $file = $request->file('FILE');
+            //$prexi = Carbon::now()->format('YmdHis');
+            $nombre = $file->getClientOriginalName();
+            $filePath = $ruta . $nombre;
 
-            if (!$ruta) {
-                return response()->json([
-                    'NUMCODE' => 1,
-                    'STRMESSAGE' => 'No se proporcionó una ruta válida',
-                    'SUCCESS' => false
-                ]);
-            }
-
-            if (!$fileContents) {
-                return response()->json([
-                    'NUMCODE' => 1,
-                    'STRMESSAGE' => 'No se proporcionó un archivo válido',
-                    'SUCCESS' => false
-                ]);
-            }
-
-            $prexi = Carbon::now();
-            $nombre = $prexi.$fileContents->getClientOriginalName();
-            $filePath = $ruta.$nombre;
             $disk = Storage::disk('ftp');
-            $disk->put($filePath, $fileContents);
+            $disk->put($filePath, file_get_contents($file));
 
+            $obj = new stdClass();
             $obj->RUTA = $disk->url($filePath);
             $obj->NOMBREIDENTIFICADOR = $nombre;
-            $obj->NOMBREARCHIVO = $fileContents->getClientOriginalName();
-            $response = $obj;
-        } catch (\Exception $e) {
-            $NUMCODE = 1;
-            $STRMESSAGE = $e->getMessage();
-        }
+            $obj->NOMBREARCHIVO = $file->getClientOriginalName();
 
-        return response()->json([
-            'NUMCODE' => $NUMCODE,
-            'STRMESSAGE' => $STRMESSAGE,
-            'RESPONSE' => $response,
-            'SUCCESS' => $NUMCODE === 0
-        ]);
+            return response()->json([
+                'NUMCODE' => 0,
+                'STRMESSAGE' => 'Éxito',
+                'RESPONSE' => $obj,
+                'SUCCESS' => true,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'NUMCODE' => 1,
+                'STRMESSAGE' => $e->getMessage(),
+                'SUCCESS' => false,
+            ]);
+        }
     }
 
-
-
-   /**
-     * @OA\Post(
-     *     path="/ListFile",
-     *     tags={"FilesController"},
-     *     description="Operaciones",
-     *      @OA\Parameter(
-     *         description="Parámetro que indica la ruta donde se almacenara el archivo",
-     *         in="path",
-     *         name="ROUTE",
-     *         required=true,
-     *         @OA\Schema(type="string"),
-     *         @OA\Examples(example="string", value="/", summary="Introduce la Ruta para almacenar el archivo")
-     *     ),
-     *       @OA\Parameter(
-     *         description="Parámetro que indica el nombre del archivo",
-     *         in="path",
-     *         name="Nombre",
-     *         required=false,
-     *         @OA\Schema(type="string"),
-     *         @OA\Examples(example="string", value="foto.png", summary="Introduce el nombre del archivo")
-     *     ),
-     *        @OA\Parameter(
-     *         description="Parámetro que indica la aplicacion de donde se manda a llamar",
-     *         in="path",
-     *         name="APP",
-     *         required=false,
-     *         @OA\Schema(type="string"),
-     *         @OA\Examples(example="string", value="PDRMYE", summary="Introduce el identificador de la APP")
-     *     ),
-     *     @OA\Response(response="200", description="Display a listing of projects.")
-     * )
-     */
     public function ListFile(Request $request){
         $SUCCESS = true;
         $NUMCODE = 0;
@@ -149,11 +128,11 @@ class FilesController extends Controller
         $NUMCODE = 0;
         $STRMESSAGE = 'Success';
         $response = [];
-    
+
         try {
             $route = $request->route;
             $path = public_path($route);
-    
+
             if (is_dir($path)) {
                 $files = scandir($path);
                 $response = array_diff($files, array('.', '..'));
@@ -165,7 +144,7 @@ class FilesController extends Controller
             $STRMESSAGE = $e->getMessage();
             $SUCCESS = false;
         }
-    
+
         return response()->json([
             'NUMCODE' => $NUMCODE,
             'STRMESSAGE' => $STRMESSAGE,
@@ -173,7 +152,7 @@ class FilesController extends Controller
             'SUCCESS' => $SUCCESS
         ]);
     }
-    
+
 
 
 
@@ -213,40 +192,46 @@ class FilesController extends Controller
 
     public function GetByName(Request $request)
     {
-        $SUCCESS = true;
-        $NUMCODE = 0;
-        $STRMESSAGE = 'Exito';
-        $response = "";
-
         try {
-        $nombre =   $request->NOMBRE;
-        $ruta   =   $request->ROUTE;
-        if($nombre != null){
-            $obj = new stdClass();
-            $atachment = Storage::disk('ftp')->get($ruta.$nombre);
-            $obj->NOMBRE=$nombre;
-            $obj->TIPO = Storage::mimeType($ruta.$nombre);
-            $obj->SIZE = Storage::size($ruta.$nombre);
-            $obj->FILE = base64_encode($atachment);
+            $ruta = $request->input('ruta');
+            $nombre = $request->input('nombre');
+
+            if (!$ruta || !$nombre) {
+                return response()->json([
+                    'NUMCODE' => 1,
+                    'STRMESSAGE' => 'Datos de entrada incompletos',
+                    'SUCCESS' => false,
+                ]);
+            }
+
+            $disk = Storage::disk('ftp');
+            $filePath = $ruta . $nombre;
+
+            // Verificar si el archivo existe en el servidor FTP
+            if (!$disk->exists($filePath)) {
+                return response()->json([
+                    'NUMCODE' => 1,
+                    'STRMESSAGE' => 'El archivo no existe en el servidor FTP',
+                    'SUCCESS' => false,
+                ]);
+            }
+
+            // Devolver el archivo para su descarga
+            return Storage::disk('ftp')->download($filePath, null, [
+                'Content-Type' => 'application/pdf', // Tipo MIME para un archivo PDF
+                'Content-Disposition' => 'inline', // Visualizar el PDF en el navegador
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'NUMCODE' => 1,
+                'STRMESSAGE' => $e->getMessage(),
+                'SUCCESS' => false,
+            ]);
         }
-
-        $response  = $obj;
-
-    } catch (\Exception $e) {
-        $NUMCODE = 1;
-        $STRMESSAGE = $e->getMessage();
-        $SUCCESS = false;
     }
 
-   return response()->json(
-        [
-            'NUMCODE' => $NUMCODE,
-            'STRMESSAGE' => $STRMESSAGE,
-            'RESPONSE' => $response,
-            'SUCCESS' => $SUCCESS
-        ]
-    );
-    }
+
 
 
 }
