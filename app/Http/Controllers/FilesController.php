@@ -190,7 +190,7 @@ class FilesController extends Controller
                 $atachment = Storage::disk('ftp')->get($ruta . $nombre);
                 $obj->NOMBRE = $nombre;
                 $obj->TIPO = Storage::mimeType($ruta . $nombre);
-                //  $obj->SIZE = Storage::size($ruta.$nombre);
+                $obj->SIZE = Storage::size($ruta . $nombre);
                 $obj->FILE = base64_encode($atachment);
             }
 
