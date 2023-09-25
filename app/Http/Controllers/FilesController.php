@@ -12,6 +12,32 @@ use stdClass;
 class FilesController extends Controller
 {
 
+    public function validacion(Request $request)
+    {
+
+        $SUCCESS = true;
+        $NUMCODE = 0;
+        $STRMESSAGE = 'Exito';
+        $response = "";
+
+        try {
+            $response = "Servicios Funcionando";
+        } catch (\Exception $e) {
+            $NUMCODE = 1;
+            $STRMESSAGE = $e->getMessage();
+            $SUCCESS = false;
+        }
+
+        return response()->json(
+            [
+                'NUMCODE' => $NUMCODE,
+                'STRMESSAGE' => $STRMESSAGE,
+                'RESPONSE' => $response,
+                'SUCCESS' => $SUCCESS,
+            ]
+        );
+    }
+
     /**
      * Show the form for creating a new resource.
      *
