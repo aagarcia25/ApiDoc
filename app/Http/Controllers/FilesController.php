@@ -180,8 +180,16 @@ class FilesController extends Controller
         try {
             $nombre = $request->NOMBRE;
             $ruta = $request->ROUTE;
-            if ($nombre != null) {
-                Storage::delete($ruta . $nombre);
+
+            if ($nombre !== null && $ruta !== null) {
+                $archivoParaEliminar = $ruta . $nombre;
+
+                if (file_exists($archivoParaEliminar)) {
+                    Storage::delete($archivoParaEliminar);
+                    // Puedes agregar lógica adicional después de eliminar el archivo si es necesario
+                } else {
+                    $response = "Archivo no existe";
+                }
             }
 
         } catch (\Exception $e) {
