@@ -221,7 +221,7 @@ class FilesController extends Controller
             $ruta = $request->ROUTE;
             if ($nombre != null) {
                 $obj = new stdClass();
-                $atachment = Storage::disk('ftp')->get($ruta . $nombre);
+                $atachment = Storage::disk('sftp')->get($ruta . $nombre);
                 $obj->NOMBRE = $nombre;
                 $obj->TIPO = Storage::mimeType($ruta . $nombre);
                 $obj->SIZE = Storage::size($ruta . $nombre);
@@ -258,7 +258,7 @@ class FilesController extends Controller
             $ruta = $request->ROUTE;
 
             $obj = new stdClass();
-            $atachment = Storage::disk('ftp')->get($ruta);
+            $atachment = Storage::disk('sftp')->get($ruta);
             $obj->TIPO = Storage::mimeType($ruta);
             $obj->SIZE = Storage::size($ruta);
             $obj->FILE = base64_encode($atachment);
