@@ -219,8 +219,10 @@ class FilesController extends Controller
         try {
             $nombre = $request->NOMBRE;
             $ruta = $request->ROUTE;
+            $obj = new stdClass();
+
             if ($nombre != null) {
-                $obj = new stdClass();
+
                 $atachment = Storage::disk('sftp')->get($ruta . $nombre);
                 $obj->NOMBRE = $nombre;
                 $obj->TIPO = Storage::mimeType($ruta . $nombre);
