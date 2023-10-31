@@ -69,8 +69,13 @@ class FilesController extends Controller
                 $fileContents = request()->file('FILE');
 
                 if ($fileContents != null) {
-                    $prexi = Carbon::now();
-                    $nombre = $prexi . $fileContents->getClientOriginalName();
+                    $nombre = "";
+                    if (strtoupper($request->CN) === 'TRUE') {
+                        $nombre = $fileContents->getClientOriginalName();
+                    } else {
+                        $prexi = Carbon::now();
+                        $nombre = $prexi . $fileContents->getClientOriginalName();
+                    }
 
                     $path = $fileContents->storeAs($ruta, $nombre);
                     $obj->RUTA = $path; //Storage::disk('ftp')->path($ruta.$nombre);
