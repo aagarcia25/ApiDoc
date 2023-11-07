@@ -19,14 +19,13 @@ Route::prefix('ApiDoc')->group(function () {
     Route::get('validacion', [FilesController::class, 'validacion']);
 
     Route::group(['middleware' => ['jwt.verify']], function () {
-        //Todo lo que este dentro de este grupo requiere verificación de usuario.
-
         Route::post('ListFile', [FilesController::class, 'ListFile']);
         Route::post('SaveFile', [FilesController::class, 'SaveFile']);
         Route::post('GetByName', [FilesController::class, 'GetByName']);
         Route::post('DeleteFile', [FilesController::class, 'DeleteFile']);
         Route::post('DeleteFileByRoute', [FilesController::class, 'DeleteFileByRoute']);
         Route::post('GetByRoute', [FilesController::class, 'GetByRoute']);
+        Route::post('DeleteDirectorio', [FilesController::class, 'DeleteDirectorio']);
 
     });
 });

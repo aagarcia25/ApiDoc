@@ -317,4 +317,39 @@ class FilesController extends Controller
         );
     }
 
+    public function DeleteDirectorio(Request $request)
+    {
+        $SUCCESS = true;
+        $NUMCODE = 0;
+        $STRMESSAGE = 'Exito';
+        $response = "Archivo Eliminado";
+
+        try {
+            $ruta = $request->ROUTE;
+
+            if ($ruta !== null) {
+
+                if (Storage::exists($ruta)) {
+                    Storage::deleteDirectory($ruta);
+                } else {
+                    $response = "Archivo no existe";
+                }
+            }
+
+        } catch (\Exception $e) {
+            $response = "Error al Eliminar Archivo";
+            $NUMCODE = 1;
+            $STRMESSAGE = $e->getMessage();
+            $SUCCESS = false;
+        }
+
+        return response()->json(
+            [
+                'NUMCODE' => $NUMCODE,
+                'STRMESSAGE' => $STRMESSAGE,
+                'RESPONSE' => $response,
+                'SUCCESS' => $SUCCESS,
+            ]
+        );
+    }
 }
