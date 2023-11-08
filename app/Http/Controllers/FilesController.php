@@ -144,6 +144,7 @@ class FilesController extends Controller
         $NUMCODE = 0;
         $STRMESSAGE = 'Exito';
         $response = "";
+        $responseData = [];
 
         try {
 
@@ -152,12 +153,29 @@ class FilesController extends Controller
             if ($existe) {
                 if ($ruta != null) {
                     $response = Storage::files($ruta);
+
+                    foreach ($response as $file) {
+                        $cadena = $file;
+                        $partes = explode('/', $cadena);
+
+                        $obj = new stdClass();
+                        $name = end($partes);
+                        $atachment = Storage::disk('sftp')->get($ruta . $name);
+                        $obj->NOMBRE = $name;
+                        $obj->NOMBREFORMATEADO = substr($name, 19);
+                        $obj->TIPO = Storage::mimeType($ruta . $name);
+                        $obj->SIZE = Storage::size($ruta . $name);
+                        $obj->FILE = base64_encode($atachment);
+
+                        $responseData[] = $obj;
+                    }
+
                 }
             } else {
                 $response = "No Existe la Ruta Indicada";
                 throw new Exception($response);
             }
-
+            $response = $responseData;
         } catch (\Exception $e) {
             $NUMCODE = 1;
             $STRMESSAGE = $e->getMessage();
