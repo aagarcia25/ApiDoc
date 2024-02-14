@@ -359,4 +359,68 @@ class FilesController extends Controller
             ]
         );
     }
+
+    public function ListFileSimple(Request $request)
+    {
+        $SUCCESS = true;
+        $NUMCODE = 0;
+        $STRMESSAGE = 'Exito';
+        $response = "";
+        $responseData = [];
+
+        try {
+
+            $ruta = $request->ROUTE;
+            $existe = Storage::exists($ruta);
+            if ($existe) {
+                if ($ruta != null) {
+
+                    // Obtener carpetas
+                    $directories = Storage::directories($ruta);
+                    foreach ($directories as $directory) {
+                        $obj = new stdClass();
+                        $name = basename($directory);
+                        $obj->NOMBRE = $name;
+                        $obj->NOMBREFORMATEADO = substr($name, 19);
+                        $obj->ESCARPETA = true;
+                        $obj->RUTA = $ruta . $name;
+                        $responseData[] = $obj;
+                    }
+
+
+
+                    $response = Storage::files($ruta);
+                    foreach ($response as $file) {
+                        $cadena = $file;
+                        $partes = explode('/', $cadena);
+
+                        $obj = new stdClass();
+                        $name = end($partes);
+                        $obj->NOMBRE = $name;
+                        $obj->NOMBREFORMATEADO = substr($name, 19);
+                        $obj->ESCARPETA = false;
+                        $obj->RUTA = $ruta . $name;
+                        $responseData[] = $obj;
+                    }
+                }
+            } else {
+                $response = "No Existe la Ruta Indicada";
+                throw new Exception($response);
+            }
+            $response = $responseData;
+        } catch (\Exception $e) {
+            $NUMCODE = 1;
+            $STRMESSAGE = $e->getMessage();
+            $SUCCESS = false;
+        }
+
+        return response()->json(
+            [
+                'NUMCODE' => $NUMCODE,
+                'STRMESSAGE' => $STRMESSAGE,
+                'RESPONSE' => $response,
+                'SUCCESS' => $SUCCESS,
+            ]
+        );
+    }
 }
