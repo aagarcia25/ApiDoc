@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use stdClass;
+use Illuminate\Support\Str;
 
 class FilesController extends Controller
 {
@@ -380,6 +381,7 @@ class FilesController extends Controller
                     foreach ($directories as $directory) {
                         $obj = new stdClass();
                         $name = basename($directory);
+                        $obj->id = Str::uuid();
                         $obj->NOMBRE = $name;
                         $obj->NOMBREFORMATEADO = substr($name, 19);
                         $obj->ESCARPETA = true;
@@ -393,8 +395,8 @@ class FilesController extends Controller
                     foreach ($response as $file) {
                         $cadena = $file;
                         $partes = explode('/', $cadena);
-
                         $obj = new stdClass();
+                        $obj->id = Str::uuid();
                         $name = end($partes);
                         $obj->NOMBRE = $name;
                         $obj->NOMBREFORMATEADO = substr($name, 19);
