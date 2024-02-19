@@ -8,6 +8,9 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use stdClass;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
+
 
 class FilesController extends Controller
 {
@@ -38,11 +41,6 @@ class FilesController extends Controller
         );
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function SaveFile(Request $request)
     {
         $SUCCESS = true;
@@ -58,7 +56,6 @@ class FilesController extends Controller
                 if (!$existe) {
                     Storage::makeDirectory($ruta);
                 }
-
             }
 
             $existe = Storage::exists($ruta);
@@ -89,7 +86,6 @@ class FilesController extends Controller
                 $response = "No Existe la Ruta Indicada";
                 throw new Exception($response);
             }
-
         } catch (\Exception $e) {
             $NUMCODE = 1;
             $STRMESSAGE = $e->getMessage();
@@ -106,38 +102,6 @@ class FilesController extends Controller
         );
     }
 
-    /**
-     * @OA\Post(
-     *     path="/ListFile",
-     *     tags={"FilesController"},
-     *     description="Operaciones",
-     *      @OA\Parameter(
-     *         description="Parámetro que indica la ruta donde se almacenara el archivo",
-     *         in="path",
-     *         name="ROUTE",
-     *         required=true,
-     *         @OA\Schema(type="string"),
-     *         @OA\Examples(example="string", value="/", summary="Introduce la Ruta para almacenar el archivo")
-     *     ),
-     *       @OA\Parameter(
-     *         description="Parámetro que indica el nombre del archivo",
-     *         in="path",
-     *         name="Nombre",
-     *         required=false,
-     *         @OA\Schema(type="string"),
-     *         @OA\Examples(example="string", value="foto.png", summary="Introduce el nombre del archivo")
-     *     ),
-     *        @OA\Parameter(
-     *         description="Parámetro que indica la aplicacion de donde se manda a llamar",
-     *         in="path",
-     *         name="APP",
-     *         required=false,
-     *         @OA\Schema(type="string"),
-     *         @OA\Examples(example="string", value="PDRMYE", summary="Introduce el identificador de la APP")
-     *     ),
-     *     @OA\Response(response="200", description="Display a listing of projects.")
-     * )
-     */
     public function ListFile(Request $request)
     {
         $SUCCESS = true;
@@ -169,7 +133,6 @@ class FilesController extends Controller
 
                         $responseData[] = $obj;
                     }
-
                 }
             } else {
                 $response = "No Existe la Ruta Indicada";
@@ -190,7 +153,6 @@ class FilesController extends Controller
                 'SUCCESS' => $SUCCESS,
             ]
         );
-
     }
 
     public function DeleteFile(Request $request)
@@ -214,7 +176,6 @@ class FilesController extends Controller
                     $response = "Archivo no existe";
                 }
             }
-
         } catch (\Exception $e) {
             $response = "Error al Eliminar Archivo";
             $NUMCODE = 1;
@@ -254,7 +215,6 @@ class FilesController extends Controller
             }
 
             $response = $obj;
-
         } catch (\Exception $e) {
             $NUMCODE = 1;
             $STRMESSAGE = $e->getMessage();
@@ -288,7 +248,6 @@ class FilesController extends Controller
             $obj->SIZE = Storage::size($ruta);
             $obj->FILE = base64_encode($atachment);
             $response = $obj;
-
         } catch (\Exception $e) {
             $NUMCODE = 1;
             $STRMESSAGE = $e->getMessage();
@@ -317,7 +276,6 @@ class FilesController extends Controller
             if ($ruta != null) {
                 Storage::delete($ruta);
             }
-
         } catch (\Exception $e) {
             $response = "Error al Eliminar Archivo";
             $NUMCODE = 1;
@@ -353,7 +311,6 @@ class FilesController extends Controller
                     $response = "Archivo no existe";
                 }
             }
-
         } catch (\Exception $e) {
             $response = "Error al Eliminar Archivo";
             $NUMCODE = 1;
@@ -369,5 +326,143 @@ class FilesController extends Controller
                 'SUCCESS' => $SUCCESS,
             ]
         );
+    }
+
+    public function CreateDirectorio(Request $request)
+    {
+        $SUCCESS = true;
+        $NUMCODE = 0;
+        $STRMESSAGE = 'Exito';
+        $response = "";
+
+        try {
+            $ruta = $request->ROUTE;
+
+            if ($ruta !== null) {
+                $existe = Storage::exists($ruta);
+                if (!$existe) {
+                    Storage::makeDirectory($ruta);
+                    $response = Storage::path($ruta);
+                }
+            } else {
+                throw new Exception("Falta el Parametro de ROUTE");
+            }
+        } catch (\Exception $e) {
+            $NUMCODE = 1;
+            $STRMESSAGE = $e->getMessage();
+            $SUCCESS = false;
+        }
+
+        return response()->json(
+            [
+                'NUMCODE' => $NUMCODE,
+                'STRMESSAGE' => $STRMESSAGE,
+                'RESPONSE' => $response,
+                'SUCCESS' => $SUCCESS,
+            ]
+        );
+    }
+
+    public function ListFileSimple(Request $request)
+    {
+        $SUCCESS = true;
+        $NUMCODE = 0;
+        $STRMESSAGE = 'Exito';
+        $response = "";
+        $responseData = [];
+
+        try {
+
+            $ruta = $request->ROUTE;
+            $existe = Storage::exists($ruta);
+
+            if (!$existe) {
+                Storage::makeDirectory($ruta);
+            }
+            $existe = Storage::exists($ruta);
+            if ($existe) {
+                if ($ruta != null) {
+
+                    // Obtener carpetas
+                    $directories = Storage::directories($ruta);
+                    foreach ($directories as $directory) {
+                        $obj = new stdClass();
+                        $name = basename($directory);
+                        $obj->id = Str::uuid();
+                        $obj->NOMBRE = $name;
+                        $obj->NOMBREFORMATEADO = substr($name, 19);
+                        $obj->ESCARPETA = true;
+                        $obj->RUTA = $ruta . '/' . $name;
+                        $responseData[] = $obj;
+                    }
+
+
+
+                    $response = Storage::files($ruta);
+                    foreach ($response as $file) {
+                        $cadena = $file;
+                        $partes = explode('/', $cadena);
+                        $obj = new stdClass();
+                        $obj->id = Str::uuid();
+                        $name = end($partes);
+                        $obj->NOMBRE = $name;
+                        $obj->NOMBREFORMATEADO = substr($name, 19);
+                        $obj->ESCARPETA = false;
+                        $obj->RUTA = $ruta  . '/' . $name;
+                        $responseData[] = $obj;
+                    }
+                }
+            } else {
+                $response = "No Existe la Ruta Indicada";
+                throw new Exception($response);
+            }
+            $response = $responseData;
+        } catch (\Exception $e) {
+            $NUMCODE = 1;
+            $STRMESSAGE = $e->getMessage();
+            $SUCCESS = false;
+        }
+
+        return response()->json(
+            [
+                'NUMCODE' => $NUMCODE,
+                'STRMESSAGE' => $STRMESSAGE,
+                'RESPONSE' => $response,
+                'SUCCESS' => $SUCCESS,
+            ]
+        );
+    }
+
+    public function deleteFileSimple(Request $request)
+    {
+        $success = true;
+        $numCode = 0;
+        $strMessage = 'Éxito';
+        $response = "Archivo eliminado";
+
+        try {
+            $ruta = $request->ROUTE;
+            $ruta = urldecode($ruta);
+            if ($ruta !== null) {
+                // Eliminar el archivo
+                Storage::disk('sftp')->delete($ruta);
+            } else {
+                $response = "Ruta de archivo no proporcionada";
+                $numCode = 2;
+                $success = false;
+            }
+        } catch (\Exception $e) {
+            $response = "Error al eliminar archivo";
+            $numCode = 1;
+            $strMessage = $e->getMessage();
+            $success = false;
+        }
+
+        return response()->json([
+            'NUMCODE' => $numCode,
+            'STRMESSAGE' => $strMessage,
+            'RESPONSE' => $response,
+            'SUCCESS' => $success,
+        ]);
     }
 }
