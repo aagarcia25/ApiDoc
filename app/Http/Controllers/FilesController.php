@@ -440,11 +440,12 @@ class FilesController extends Controller
 
         try {
             $ruta = $request->ROUTE;
-
+            $ruta = urldecode($ruta);
             if ($ruta !== null) {
                 if (file_exists($ruta)) {
                     Storage::delete($ruta);
                 } else {
+                    $success = false;
                     $response = "Archivo no existe";
                 }
             } else {
