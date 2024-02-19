@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use stdClass;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
+
 
 class FilesController extends Controller
 {
@@ -442,8 +444,9 @@ class FilesController extends Controller
             $ruta = $request->ROUTE;
             $ruta = urldecode($ruta);
             if ($ruta !== null) {
-                if (file_exists($ruta)) {
-                    unlink($ruta);
+                $filePath = $ruta;
+                if (File::exists($filePath)) {
+                    File::delete($filePath);
                 } else {
                     $success = false;
                     $response = "Archivo no existe";
