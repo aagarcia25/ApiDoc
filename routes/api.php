@@ -20,6 +20,7 @@ Route::prefix('ApiDoc')->group(function () {
 
     Route::group(['middleware' => ['jwt.verify']], function () {
         Route::post('ListFileSimple', [FilesController::class, 'ListFileSimple']);
+        Route::post('DeleteFileSimple', [FilesController::class, 'DeleteFileSimple']);
         Route::post('ListFile', [FilesController::class, 'ListFile']);
         Route::post('SaveFile', [FilesController::class, 'SaveFile']);
         Route::post('GetByName', [FilesController::class, 'GetByName']);
