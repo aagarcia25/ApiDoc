@@ -444,14 +444,8 @@ class FilesController extends Controller
             $ruta = $request->ROUTE;
             $ruta = urldecode($ruta);
             if ($ruta !== null) {
-                $filePath = $ruta;
-                if (File::exists($filePath)) {
-                    File::delete($filePath);
-                } else {
-                    $success = false;
-                    $response = "Archivo no existe";
-                    $strMessage = 'Error';
-                }
+                // Eliminar el archivo
+                Storage::disk('sftp')->delete($ruta);
             } else {
                 $response = "Ruta de archivo no proporcionada";
                 $numCode = 2;
