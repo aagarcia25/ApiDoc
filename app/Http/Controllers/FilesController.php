@@ -443,10 +443,11 @@ class FilesController extends Controller
             $ruta = urldecode($ruta);
             if ($ruta !== null) {
                 if (file_exists($ruta)) {
-                    Storage::delete($ruta);
+                    unlink($ruta);
                 } else {
                     $success = false;
                     $response = "Archivo no existe";
+                    $strMessage = 'Error';
                 }
             } else {
                 $response = "Ruta de archivo no proporcionada";
