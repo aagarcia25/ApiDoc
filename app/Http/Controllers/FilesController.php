@@ -373,6 +373,10 @@ class FilesController extends Controller
 
             $ruta = $request->ROUTE;
             $existe = Storage::exists($ruta);
+
+            if (!$existe) {
+                Storage::makeDirectory($ruta);
+            }
             if ($existe) {
                 if ($ruta != null) {
 
