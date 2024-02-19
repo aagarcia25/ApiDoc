@@ -406,7 +406,7 @@ class FilesController extends Controller
                         $obj->NOMBRE = $name;
                         $obj->NOMBREFORMATEADO = substr($name, 19);
                         $obj->ESCARPETA = false;
-                        $obj->RUTA = $ruta . $name;
+                        $obj->RUTA = $ruta  . '/' . $name;
                         $responseData[] = $obj;
                     }
                 }
