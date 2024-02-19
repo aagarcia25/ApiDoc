@@ -431,39 +431,39 @@ class FilesController extends Controller
         );
     }
 
-    public function DeleteFileSimple(Request $request)
+    public function deleteFileSimple(Request $request)
     {
-        $SUCCESS = true;
-        $NUMCODE = 0;
-        $STRMESSAGE = 'Exito';
-        $response = "Archivo Eliminado";
+        $success = true;
+        $numCode = 0;
+        $strMessage = 'Éxito';
+        $response = "Archivo eliminado";
 
         try {
             $ruta = $request->ROUTE;
 
             if ($ruta !== null) {
-                $archivoParaEliminar = $ruta;
-
-                if (file_exists($archivoParaEliminar)) {
-                    Storage::delete($archivoParaEliminar);
+                if (file_exists($ruta)) {
+                    Storage::delete($ruta);
                 } else {
                     $response = "Archivo no existe";
                 }
+            } else {
+                $response = "Ruta de archivo no proporcionada";
+                $numCode = 2;
+                $success = false;
             }
         } catch (\Exception $e) {
-            $response = "Error al Eliminar Archivo";
-            $NUMCODE = 1;
-            $STRMESSAGE = $e->getMessage();
-            $SUCCESS = false;
+            $response = "Error al eliminar archivo";
+            $numCode = 1;
+            $strMessage = $e->getMessage();
+            $success = false;
         }
 
-        return response()->json(
-            [
-                'NUMCODE' => $NUMCODE,
-                'STRMESSAGE' => $STRMESSAGE,
-                'RESPONSE' => $response,
-                'SUCCESS' => $SUCCESS,
-            ]
-        );
+        return response()->json([
+            'NUMCODE' => $numCode,
+            'STRMESSAGE' => $strMessage,
+            'RESPONSE' => $response,
+            'SUCCESS' => $success,
+        ]);
     }
 }
