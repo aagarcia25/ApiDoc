@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use stdClass;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 
 class FilesController extends Controller
 {
@@ -481,6 +482,8 @@ class FilesController extends Controller
             $existeOrigen = Storage::exists($rutaOrigen);
             $existeDestino = Storage::exists($rutaDestino);
 
+            Log::info("Ruta Origen: " . trim(env('APP_DOC_ROUTE') . $rutaOrigen));
+            Log::info("Ruta DESTINO: " . trim(env('APP_DOC_ROUTE') . $rutaDestino));
             if (!$existeOrigen) {
                 throw new \Exception("La ruta de origen no existe.");
             }
@@ -489,25 +492,7 @@ class FilesController extends Controller
                 Storage::makeDirectory($rutaDestino);
             }
 
-            // Obtener carpetas
-            $directories = Storage::allDirectories($rutaOrigen);
-            foreach ($directories as $directory) {
-                $nombreCarpeta = basename($directory);
-                $nuevaRutaCarpeta = $rutaDestino . '/' . $nombreCarpeta;
-
-                // Utilizar File::copyDirectory en lugar de Storage::copyDirectory
-                File::copyDirectory($directory, $nuevaRutaCarpeta);
-            }
-
-            // Obtener archivos
-            $files = Storage::allFiles($rutaOrigen);
-            foreach ($files as $file) {
-                $nombreArchivo = basename($file);
-                $nuevaRutaArchivo = $rutaDestino . '/' . $nombreArchivo;
-
-                // Utilizar funciones estándar de PHP para copiar archivos
-                copy($file, $nuevaRutaArchivo);
-            }
+            $this->copiarDirectorio($rutaOrigen, $rutaDestino);
 
             $response = "Archivos y carpetas copiados/movidos correctamente.";
         } catch (\Exception $e) {
@@ -522,5 +507,31 @@ class FilesController extends Controller
             'RESPONSE' => $response,
             'SUCCESS' => $SUCCESS,
         ]);
+    }
+
+    private function copiarDirectorio($directorioOrigen, $directorioDestino)
+    {
+        $archivos = Storage::allFiles($directorioOrigen);
+        foreach ($archivos as $archivo) {
+            $nombreArchivo = basename($archivo);
+            $rutaDestinoArchivo = $directorioDestino . '/' . $nombreArchivo;
+
+            // Verifica si el archivo ya existe en la carpeta de destino
+            if (!Storage::exists($rutaDestinoArchivo)) {
+                Storage::copy($archivo, $rutaDestinoArchivo);
+            }
+        }
+
+        $directorios = Storage::directories($directorioOrigen);
+        foreach ($directorios as $directorio) {
+            $nombreDirectorio = basename($directorio);
+            $rutaDestinoDirectorio = $directorioDestino . '/' . $nombreDirectorio;
+
+            // Verifica si el directorio ya existe en la carpeta de destino
+            if (!Storage::exists($rutaDestinoDirectorio)) {
+                Storage::makeDirectory($rutaDestinoDirectorio);
+                $this->copiarDirectorio($directorio, $rutaDestinoDirectorio); // Llamada recursiva para copiar subdirectorios
+            }
+        }
     }
 }
