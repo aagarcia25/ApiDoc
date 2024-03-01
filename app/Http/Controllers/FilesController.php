@@ -472,7 +472,6 @@ class FilesController extends Controller
         $NUMCODE = 0;
         $STRMESSAGE = 'Exito';
         $response = "";
-        $responseData = [];
 
         try {
             $rutaOrigen = $request->input('ORIGEN');
