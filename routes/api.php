@@ -29,5 +29,6 @@ Route::prefix('ApiDoc')->group(function () {
         Route::post('GetByRoute', [FilesController::class, 'GetByRoute']);
         Route::post('DeleteDirectorio', [FilesController::class, 'DeleteDirectorio']);
         Route::post('CreateDirectorio', [FilesController::class, 'CreateDirectorio']);
+        Route::post('moverArchivos', [FilesController::class, 'moverArchivos']);
     });
 });
