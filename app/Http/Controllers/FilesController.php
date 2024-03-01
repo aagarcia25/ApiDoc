@@ -11,7 +11,6 @@ use stdClass;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 
-
 class FilesController extends Controller
 {
 
@@ -466,13 +465,14 @@ class FilesController extends Controller
         ]);
     }
 
+
+
     public function moverArchivos(Request $request)
     {
         $SUCCESS = true;
         $NUMCODE = 0;
         $STRMESSAGE = 'Exito';
         $response = "";
-        $responseData = [];
 
         try {
             $rutaOrigen = $request->input('ORIGEN');
@@ -494,7 +494,9 @@ class FilesController extends Controller
             foreach ($directories as $directory) {
                 $nombreCarpeta = basename($directory);
                 $nuevaRutaCarpeta = $rutaDestino . '/' . $nombreCarpeta;
-                Storage::copyDirectory($directory, $nuevaRutaCarpeta);
+
+                // Utilizar File::copyDirectory en lugar de Storage::copyDirectory
+                File::copyDirectory($directory, $nuevaRutaCarpeta);
             }
 
             // Obtener archivos
@@ -502,7 +504,9 @@ class FilesController extends Controller
             foreach ($files as $file) {
                 $nombreArchivo = basename($file);
                 $nuevaRutaArchivo = $rutaDestino . '/' . $nombreArchivo;
-                Storage::copy($file, $nuevaRutaArchivo);
+
+                // Utilizar funciones estándar de PHP para copiar archivos
+                copy($file, $nuevaRutaArchivo);
             }
 
             $response = "Archivos y carpetas copiados/movidos correctamente.";
