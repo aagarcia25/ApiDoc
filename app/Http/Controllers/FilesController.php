@@ -465,4 +465,58 @@ class FilesController extends Controller
             'SUCCESS' => $success,
         ]);
     }
+
+    public function moverArchivos(Request $request)
+    {
+        $SUCCESS = true;
+        $NUMCODE = 0;
+        $STRMESSAGE = 'Exito';
+        $response = "";
+        $responseData = [];
+
+        try {
+            $rutaOrigen = $request->input('ORIGEN');
+            $rutaDestino = $request->input('DESTINO');
+
+            $existeOrigen = Storage::exists($rutaOrigen);
+            $existeDestino = Storage::exists($rutaDestino);
+
+            if (!$existeOrigen) {
+                throw new \Exception("La ruta de origen no existe.");
+            }
+
+            if (!$existeDestino) {
+                Storage::makeDirectory($rutaDestino);
+            }
+
+            // Obtener carpetas
+            $directories = Storage::allDirectories($rutaOrigen);
+            foreach ($directories as $directory) {
+                $nombreCarpeta = basename($directory);
+                $nuevaRutaCarpeta = $rutaDestino . '/' . $nombreCarpeta;
+                Storage::copyDirectory($directory, $nuevaRutaCarpeta);
+            }
+
+            // Obtener archivos
+            $files = Storage::allFiles($rutaOrigen);
+            foreach ($files as $file) {
+                $nombreArchivo = basename($file);
+                $nuevaRutaArchivo = $rutaDestino . '/' . $nombreArchivo;
+                Storage::copy($file, $nuevaRutaArchivo);
+            }
+
+            $response = "Archivos y carpetas copiados/movidos correctamente.";
+        } catch (\Exception $e) {
+            $NUMCODE = 1;
+            $STRMESSAGE = $e->getMessage();
+            $SUCCESS = false;
+        }
+
+        return response()->json([
+            'NUMCODE' => $NUMCODE,
+            'STRMESSAGE' => $STRMESSAGE,
+            'RESPONSE' => $response,
+            'SUCCESS' => $SUCCESS,
+        ]);
+    }
 }
