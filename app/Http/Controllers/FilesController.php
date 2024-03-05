@@ -511,28 +511,28 @@ class FilesController extends Controller
 
     private function copiarDirectorio($directorioOrigen, $directorioDestino)
     {
-        // Copiar archivos
-        $archivos = Storage::allFiles($directorioOrigen);
-        foreach ($archivos as $archivo) {
-            $nombreArchivo = pathinfo($archivo)['basename'];
-            $rutaDestinoArchivo = $directorioDestino . '/' . $nombreArchivo;
 
-            // Verifica si el archivo ya existe en la carpeta de destino
-            if (!Storage::exists($rutaDestinoArchivo)) {
-                Storage::copy($archivo, $rutaDestinoArchivo);
-            }
-        }
 
-        // Copiar directorios (recursivamente)
         $directorios = Storage::directories($directorioOrigen);
         foreach ($directorios as $directorio) {
-            $nombreDirectorio = pathinfo($directorio)['basename'];
+            $nombreDirectorio = pathinfo($directorio);
             $rutaDestinoDirectorio = $directorioDestino . '/' . $nombreDirectorio;
 
             // Verifica si el directorio ya existe en la carpeta de destino
             if (!Storage::exists($rutaDestinoDirectorio)) {
                 Storage::makeDirectory($rutaDestinoDirectorio);
                 $this->copiarDirectorio($directorio, $rutaDestinoDirectorio); // Llamada recursiva para copiar subdirectorios
+            }
+        }
+
+        $archivos = Storage::allFiles($directorioOrigen);
+        foreach ($archivos as $archivo) {
+            $nombreArchivo = pathinfo($archivo);
+            $rutaDestinoArchivo = $directorioDestino . '/' . $nombreArchivo;
+
+            // Verifica si el archivo ya existe en la carpeta de destino
+            if (!Storage::exists($rutaDestinoArchivo)) {
+                Storage::copy($archivo, $rutaDestinoArchivo);
             }
         }
     }
