@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use stdClass;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use phpseclib3\Net\SFTP;
+use phpseclib3\Net\SSH2;
 
 class FilesController extends Controller
 {
@@ -479,22 +481,22 @@ class FilesController extends Controller
             $rutaOrigen = trim($request->input('ORIGEN'));
             $rutaDestino = trim($request->input('DESTINO'));
 
-            $existeOrigen = Storage::exists($rutaOrigen);
-            $existeDestino = Storage::exists($rutaDestino);
-
             Log::info("Ruta Origen: " . trim(env('APP_DOC_ROUTE') . $rutaOrigen));
             Log::info("Ruta DESTINO: " . trim(env('APP_DOC_ROUTE') . $rutaDestino));
-            if (!$existeOrigen) {
-                throw new \Exception("La ruta de origen no existe.");
+            $ipServidor = '10.210.26.28';
+            $usuarioSSH = 'sshd';  // Reemplaza con el usuario de SSH del servidor
+
+            // Conexión SSH al servidor
+            $ssh = new SSH2($ipServidor);
+            if (!$ssh->login($usuarioSSH, 'infinite123')) {
+                throw new \Exception('Error de conexión SSH al servidor.');
             }
 
-            if (!$existeDestino) {
-                Storage::makeDirectory($rutaDestino);
-            }
+            // Comando cp en el servidor remoto
+            $comando = "cp -r '/mnt/HD/HD_a2/'.$rutaOrigen '/mnt/HD/HD_a2/'.$rutaDestino";
 
-            $this->copiarDirectorio($rutaOrigen, $rutaDestino);
-
-            $response = "Archivos y carpetas copiados/movidos correctamente.";
+            // Ejecuta el comando cp en el servidor remoto
+            $output = $ssh->exec($comando);
         } catch (\Exception $e) {
             $NUMCODE = 1;
             $STRMESSAGE = $e->getMessage();
@@ -507,33 +509,5 @@ class FilesController extends Controller
             'RESPONSE' => $response,
             'SUCCESS' => $SUCCESS,
         ]);
-    }
-
-    private function copiarDirectorio($directorioOrigen, $directorioDestino)
-    {
-
-
-        $directorios = Storage::directories($directorioOrigen);
-        foreach ($directorios as $directorio) {
-            $nombreDirectorio = pathinfo($directorio);
-            $rutaDestinoDirectorio = $directorioDestino . '/' . $nombreDirectorio;
-
-            // Verifica si el directorio ya existe en la carpeta de destino
-            if (!Storage::exists($rutaDestinoDirectorio)) {
-                Storage::makeDirectory($rutaDestinoDirectorio);
-                $this->copiarDirectorio($directorio, $rutaDestinoDirectorio); // Llamada recursiva para copiar subdirectorios
-            }
-        }
-
-        $archivos = Storage::allFiles($directorioOrigen);
-        foreach ($archivos as $archivo) {
-            $nombreArchivo = pathinfo($archivo);
-            $rutaDestinoArchivo = $directorioDestino . '/' . $nombreArchivo;
-
-            // Verifica si el archivo ya existe en la carpeta de destino
-            if (!Storage::exists($rutaDestinoArchivo)) {
-                Storage::copy($archivo, $rutaDestinoArchivo);
-            }
-        }
     }
 }
