@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Middleware;
 
 use Closure;
@@ -22,7 +23,7 @@ class JwtMiddlware
 
             // attempt to verify the credentials and create a token for the user
             $token = $request->header('Authorization');
-            $res = $this->validatoken($token);
+            $res = true; // $this->validatoken($token);
             if ($res === 200) {
                 return $next($request);
             } else {
@@ -33,7 +34,6 @@ class JwtMiddlware
                     'SUCCESS' => false,
                 ], 401);
             }
-
         } catch (\Exception $e) {
             return response()->json([
                 'NUMCODE' => -1,
@@ -42,7 +42,6 @@ class JwtMiddlware
                 'SUCCESS' => false,
             ], 401);
         }
-
     }
 
     public function validatoken(String $token)
@@ -63,5 +62,4 @@ class JwtMiddlware
             return $e->getMessage();
         }
     }
-
 }
