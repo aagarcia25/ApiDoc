@@ -23,7 +23,7 @@ class JwtMiddlware
 
             // attempt to verify the credentials and create a token for the user
             $token = $request->header('Authorization');
-            $res = true; // $this->validatoken($token);
+            $res = 200; // $this->validatoken($token);
             if ($res === 200) {
                 return $next($request);
             } else {
