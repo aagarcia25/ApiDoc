@@ -72,8 +72,7 @@ class FilesController extends Controller
                     if (strtoupper($request->CN) === 'TRUE') {
                         $nombre = $fileContents->getClientOriginalName();
                     } else {
-                        $prexi = Carbon::now();
-                        $nombre = $prexi . $fileContents->getClientOriginalName();
+                        $nombre =  $fileContents->getClientOriginalName();
                     }
 
                     $path = $fileContents->storeAs($ruta, $nombre);
@@ -467,9 +466,6 @@ class FilesController extends Controller
             'SUCCESS' => $success,
         ]);
     }
-
-
-
     public function moverArchivos(Request $request)
     {
         $SUCCESS = true;
