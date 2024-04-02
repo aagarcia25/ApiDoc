@@ -506,4 +506,56 @@ class FilesController extends Controller
             'SUCCESS' => $SUCCESS,
         ]);
     }
+
+
+    public function VerificaMueveArchivos(Request $request)
+    {
+        $SUCCESS = true;
+        $NUMCODE = 0;
+        $STRMESSAGE = 'Exito';
+        $response = "";
+
+        try {
+            $rutaOrigen = trim($request->input('ORIGEN'));
+            $rutaDestino = trim($request->input('DESTINO'));
+
+            Log::info("Ruta Origen: " . trim(env('APP_DOC_ROUTE') . $rutaOrigen));
+            Log::info("Ruta DESTINO: " . trim(env('APP_DOC_ROUTE') . $rutaDestino));
+            $ipServidor = '10.210.26.28';
+            $usuarioSSH = 'sshd';  // Reemplaza con el usuario de SSH del servidor
+
+            // Conexión SSH al servidor
+            $ssh = new SSH2($ipServidor);
+            if (!$ssh->login($usuarioSSH, 'infinite123')) {
+                throw new \Exception('Error de conexión SSH al servidor.');
+            }
+
+            // Obtener lista de archivos en el directorio de origen
+            $comandoListarOrigen = "ls '/mnt/HD/HD_a2/" . $rutaOrigen . "'";
+            $archivosOrigen = explode("\n", trim($ssh->exec($comandoListarOrigen)));
+
+            // Obtener lista de archivos en el directorio de destino
+            $comandoListarDestino = "ls '/mnt/HD/HD_a2/" . $rutaDestino . "'";
+            $archivosDestino = explode("\n", trim($ssh->exec($comandoListarDestino)));
+
+            // Copiar archivos que están en el directorio de origen pero no en el de destino
+            foreach ($archivosOrigen as $archivo) {
+                if (!in_array($archivo, $archivosDestino)) {
+                    $comandoCopiar = "cp -r '/mnt/HD/HD_a2/" . $rutaOrigen . "/" . $archivo . "' '/mnt/HD/HD_a2/" . $rutaDestino . "'";
+                    $ssh->exec($comandoCopiar);
+                }
+            }
+        } catch (\Exception $e) {
+            $NUMCODE = 1;
+            $STRMESSAGE = $e->getMessage();
+            $SUCCESS = false;
+        }
+
+        return response()->json([
+            'NUMCODE' => $NUMCODE,
+            'STRMESSAGE' => $STRMESSAGE,
+            'RESPONSE' => $response,
+            'SUCCESS' => $SUCCESS,
+        ]);
+    }
 }
