@@ -391,7 +391,7 @@ class FilesController extends Controller
                         $name = basename($directory);
                         $obj->id = Str::uuid();
                         $obj->NOMBRE = $name;
-                        $obj->NOMBREFORMATEADO = $name;
+                        $obj->NOMBREFORMATEADO = substr($name, 19);
                         $obj->ESCARPETA = true;
                         $obj->RUTA = $ruta . '/' . $name;
                         $responseData[] = $obj;
@@ -407,7 +407,7 @@ class FilesController extends Controller
                         $obj->id = Str::uuid();
                         $name = end($partes);
                         $obj->NOMBRE = $name;
-                        $obj->NOMBREFORMATEADO = $name;
+                        $obj->NOMBREFORMATEADO = substr($name, 19);
                         $obj->ESCARPETA = false;
                         $obj->RUTA = $ruta  . '/' . $name;
                         $responseData[] = $obj;
