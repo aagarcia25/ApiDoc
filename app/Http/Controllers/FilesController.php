@@ -394,7 +394,6 @@ class FilesController extends Controller
                         $obj->NOMBREFORMATEADO = substr($name, 19);
                         $obj->ESCARPETA = true;
                         $obj->RUTA = $ruta . '/' . $name;
-                        $obj->SIZE = Storage::size($ruta . $name);
                         $responseData[] = $obj;
                     }
 
