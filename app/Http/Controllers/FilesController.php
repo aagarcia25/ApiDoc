@@ -364,6 +364,8 @@ class FilesController extends Controller
         );
     }
 
+  
+
     public function ListFileSimple(Request $request)
     {
         $SUCCESS = true;
@@ -397,8 +399,6 @@ class FilesController extends Controller
                         $responseData[] = $obj;
                     }
 
-
-
                     $response = Storage::files($ruta);
                     foreach ($response as $file) {
                         $cadena = $file;
@@ -415,6 +415,7 @@ class FilesController extends Controller
                         $responseData[] = $obj;
                     }
                 }
+
             } else {
                 $response = "No Existe la Ruta Indicada";
                 throw new Exception($response);
@@ -523,6 +524,7 @@ class FilesController extends Controller
 
             Log::info("Ruta Origen: " . trim(env('APP_DOC_ROUTE') . $rutaOrigen));
             Log::info("Ruta DESTINO: " . trim(env('APP_DOC_ROUTE') . $rutaDestino));
+
             $ipServidor = '10.210.26.28';
             $usuarioSSH = 'sshd';  // Reemplaza con el usuario de SSH del servidor
 
@@ -560,4 +562,72 @@ class FilesController extends Controller
             'SUCCESS' => $SUCCESS,
         ]);
     }
+
+    // class CarpetaHijaObjet {
+        
+    //     public $NOMBRE;
+    //     public $NOMBREFORMATEADO;
+    //     public $ESCARPETA;
+    //     public $RUTA;
+    //     public $CARPETAHIJA;
+   
+    // }
+
+    // class JsonDocument {
+        
+    //     public $NOMBRE;
+    //     public $NOMBREFORMATEADO;
+    //     public $ESCARPETA;
+    //     public $RUTA;
+    //     public $JsonDocument[];
+   
+    // }
+
+    public function ListFileFull(Request $request)
+    {
+        $SUCCESS = true;
+        $NUMCODE = 0;
+        $STRMESSAGE = 'Exito';
+        $response = "";
+
+        $ipServidor = '10.210.26.28';
+        $usuarioSSH = 'sshd';  // Reemplaza con el usuario de SSH del servidor
+
+        $ssh = new SSH2($ipServidor);
+        if (!$ssh->login($usuarioSSH, 'infinite123')) {
+            throw new \Exception('Error de conexión SSH al servidor.');
+        }
+
+        $rutaBase = '/mnt/HD/HD_a2/PADBI_DEV/';
+        $subcarpeta = $request->input('ruta');
+        $rutaCompleta = $rutaBase . $subcarpeta;
+
+        // Ejecutar el comando `find` en el servidor remoto con la ruta completa
+        $comando = "find " . escapeshellarg($rutaCompleta) . " -type f";
+        $output = $ssh->exec($comando);
+
+        // Convierte la salida en un arreglo, dividiendo por líneas
+        $rutas = explode("\n", trim($output));
+
+        // Inicializa un arreglo para almacenar el contenido de los archivos
+        $archivosCompletos = [];
+
+        // Recorre cada ruta y lee el contenido del archivo
+        foreach ($rutas as $rutaArchivo) {
+            if (!empty($rutaArchivo)) {
+                // Ejecutar el comando `cat` para obtener el contenido del archivo
+                $contenidoArchivo = $ssh->exec("cat " . escapeshellarg($rutaArchivo));
+                $archivosCompletos[] = [
+                    'ruta' => $rutaArchivo,
+                    'contenido' => $contenidoArchivo,
+                ];
+            }
+        }
+       
+        
+        return response()->json($archivosCompletos);
+
+        
+    }
+
 }
