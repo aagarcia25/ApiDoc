@@ -582,70 +582,64 @@ class FilesController extends Controller
     //     public $JsonDocument[];
    
     // }
-
     public function ListFileFull(Request $request)
-{
-    $SUCCESS = true;
-    $NUMCODE = 0;
-    $STRMESSAGE = 'Exito';
-    $response = "";
-
-    $ipServidor = '10.210.26.28';
-    $usuarioSSH = 'sshd';  // Reemplaza con el usuario de SSH del servidor
-
-    $ssh = new SSH2($ipServidor);
-    if (!$ssh->login($usuarioSSH, 'infinite123')) {
-        throw new \Exception('Error de conexión SSH al servidor.');
-    }
-
-    $rutaBase = '/mnt/HD/HD_a2/PADBI_DEV/';
-    $subcarpeta = $request->input('ruta');
-    $rutaCompleta = $rutaBase . $subcarpeta;
-
-    // Ejecutar el comando `find` en el servidor remoto con la ruta completa
-    $comando = "find " . escapeshellarg($rutaCompleta) . " -type f";
-    $output = $ssh->exec($comando);
-
-    // Convierte la salida en un arreglo, dividiendo por líneas
-    $rutas = explode("\n", trim($output));
-
-    // Inicializa un arreglo para almacenar el contenido de los archivos
-    $archivosCompletos = [];
-
-    // Establecer un timeout largo para evitar timeouts en la ejecución de comandos largos
-    ini_set('max_execution_time', 300); // 5 minutos
-    ini_set('memory_limit', '512M');
-    $ssh->setTimeout(0);
-
-    // Recorre cada ruta y lee el contenido del archivo
-    foreach ($rutas as $rutaArchivo) {
-        if (!empty($rutaArchivo)) {
-            // Validar el tamaño del archivo antes de leer
-            $comandoSize = "stat -c%s " . escapeshellarg($rutaArchivo);
-            $size = (int)$ssh->exec($comandoSize);
-
-            // Limitar la lectura de archivos muy grandes
-            if ($size > 1048576) { // 1MB
-                \Log::warning('El archivo es demasiado grande para leerlo completamente: ' . $rutaArchivo);
-                $contenidoArchivo = 'El archivo es demasiado grande para mostrar su contenido completo.';
-            } else {
-                // Leer el archivo en bloques
-                $stream = $ssh->exec("cat " . escapeshellarg($rutaArchivo), false);
-                $contenidoArchivo = '';
-                while ($data = $ssh->read()) {
-                    $contenidoArchivo .= $data;
-                }
-            }
-
-            $archivosCompletos[] = [
-                'ruta' => $rutaArchivo,
-                'contenido' => $contenidoArchivo,
-            ];
+    {
+        $SUCCESS = true;
+        $NUMCODE = 0;
+        $STRMESSAGE = 'Exito';
+        $response = "";
+    
+        $ipServidor = '10.210.26.28';
+        $usuarioSSH = 'sshd';  // Reemplaza con el usuario de SSH del servidor
+    
+        $ssh = new SSH2($ipServidor);
+        if (!$ssh->login($usuarioSSH, 'infinite123')) {
+            throw new \Exception('Error de conexión SSH al servidor.');
         }
+    
+        $rutaBase = '/mnt/HD/HD_a2/PADBI_DEV/';
+        $subcarpeta = $request->input('ruta');
+        $rutaCompleta = $rutaBase . $subcarpeta;
+    
+        // Ejecutar el comando `find` en el servidor remoto con la ruta completa
+        $comando = "find " . escapeshellarg($rutaCompleta) . " -type f";
+        $output = $ssh->exec($comando);
+    
+        // Convierte la salida en un arreglo, dividiendo por líneas
+        $rutas = explode("\n", trim($output));
+    
+        // Inicializa un arreglo para almacenar el contenido de los archivos
+        $archivosCompletos = [];
+    
+        // Establecer un timeout largo para evitar timeouts en la ejecución de comandos largos
+        ini_set('max_execution_time', 300); // 5 minutos
+        ini_set('memory_limit', '512M');
+        $ssh->setTimeout(0);
+    
+        // Recorre cada ruta y lee el contenido del archivo
+        foreach ($rutas as $rutaArchivo) {
+            if (!empty($rutaArchivo)) {
+                // Validar el tamaño del archivo antes de leer
+                $comandoSize = "stat -c%s " . escapeshellarg($rutaArchivo);
+                $size = (int)$ssh->exec($comandoSize);
+    
+                // Limitar la lectura de archivos muy grandes
+                // if ($size > 1048576) { // 1MB
+                //     \Log::warning('El archivo es demasiado grande para leerlo completamente: ' . $rutaArchivo);
+                //     $contenidoArchivo = 'El archivo es demasiado grande para mostrar su contenido completo.';
+                // } else {
+                    // Leer el archivo completo (sin pasar el segundo parámetro que era `false`)
+                    $contenidoArchivo = $ssh->exec("cat " . escapeshellarg($rutaArchivo));
+                
+    
+                $archivosCompletos[] = [
+                    'ruta' => $rutaArchivo,
+                    'contenido' => $contenidoArchivo,
+                ];
+            }
+        }
+    
+        return response()->json($archivosCompletos);
     }
-
-    return response()->json($archivosCompletos);
-}
-
-
+    
 }
