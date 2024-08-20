@@ -608,38 +608,28 @@ class FilesController extends Controller
         // Convierte la salida en un arreglo, dividiendo por líneas
         $rutas = explode("\n", trim($output));
     
-        // Inicializa un arreglo para almacenar el contenido de los archivos
+        // Inicializa un arreglo para almacenar los archivos como binarios
         $archivosCompletos = [];
     
-        // Establecer un timeout largo para evitar timeouts en la ejecución de comandos largos
-        ini_set('max_execution_time', 300); // 5 minutos
-        ini_set('memory_limit', '512M');
-        $ssh->setTimeout(0);
-    
-        // Recorre cada ruta y lee el contenido del archivo
+        // Recorre cada ruta y obtiene el archivo como un binario
         foreach ($rutas as $rutaArchivo) {
             if (!empty($rutaArchivo)) {
-                // Validar el tamaño del archivo antes de leer
-                $comandoSize = "stat -c%s " . escapeshellarg($rutaArchivo);
-                $size = (int)$ssh->exec($comandoSize);
+                // Usar `cat` para obtener el archivo en binario
+                $archivoBinario = $ssh->exec("cat " . escapeshellarg($rutaArchivo));
     
-                // Limitar la lectura de archivos muy grandes
-                // if ($size > 1048576) { // 1MB
-                //     \Log::warning('El archivo es demasiado grande para leerlo completamente: ' . $rutaArchivo);
-                //     $contenidoArchivo = 'El archivo es demasiado grande para mostrar su contenido completo.';
-                // } else {
-                    // Leer el archivo completo (sin pasar el segundo parámetro que era `false`)
-                    $contenidoArchivo = $ssh->exec("cat " . escapeshellarg($rutaArchivo));
-                
+                // Codificar el archivo en base64 para transferirlo como un blob o archivo binario
+                $archivoBase64 = base64_encode($archivoBinario);
     
                 $archivosCompletos[] = [
                     'ruta' => $rutaArchivo,
-                    'contenido' => $contenidoArchivo,
+                    'archivo' => $archivoBase64,  // Archivo en formato base64
                 ];
             }
         }
     
+        // Retornar los archivos como JSON con el contenido en base64
         return response()->json($archivosCompletos);
     }
+    
     
 }
