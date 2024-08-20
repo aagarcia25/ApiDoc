@@ -583,53 +583,58 @@ class FilesController extends Controller
    
     // }
     public function ListFileFull(Request $request)
-    {
-        $SUCCESS = true;
-        $NUMCODE = 0;
-        $STRMESSAGE = 'Exito';
-        $response = "";
-    
-        $ipServidor = '10.210.26.28';
-        $usuarioSSH = 'sshd';  // Reemplaza con el usuario de SSH del servidor
-    
-        $ssh = new SSH2($ipServidor);
-        if (!$ssh->login($usuarioSSH, 'infinite123')) {
-            throw new \Exception('Error de conexión SSH al servidor.');
-        }
-    
-        $rutaBase = '/mnt/HD/HD_a2/PADBI_DEV/';
-        $subcarpeta = $request->input('ruta');
-        $rutaCompleta = $rutaBase . $subcarpeta;
-    
-        // Ejecutar el comando `find` en el servidor remoto con la ruta completa
-        $comando = "find " . escapeshellarg($rutaCompleta) . " -type f";
-        $output = $ssh->exec($comando);
-    
-        // Convierte la salida en un arreglo, dividiendo por líneas
-        $rutas = explode("\n", trim($output));
-    
-        // Inicializa un arreglo para almacenar los archivos como binarios
-        $archivosCompletos = [];
-    
-        // Recorre cada ruta y obtiene el archivo como un binario
-        foreach ($rutas as $rutaArchivo) {
-            if (!empty($rutaArchivo)) {
-                // Usar `cat` para obtener el archivo en binario
-                $archivoBinario = $ssh->exec("cat " . escapeshellarg($rutaArchivo));
-    
-                // Codificar el archivo en base64 para transferirlo como un blob o archivo binario
-                $archivoBase64 = base64_encode($archivoBinario);
-    
-                $archivosCompletos[] = [
-                    'ruta' => $rutaArchivo,
-                    'archivo' => $archivoBase64,  // Archivo en formato base64
-                ];
-            }
-        }
-    
-        // Retornar los archivos como JSON con el contenido en base64
-        return response()->json($archivosCompletos);
+{
+    $SUCCESS = true;
+    $NUMCODE = 0;
+    $STRMESSAGE = 'Exito';
+    $response = "";
+
+    $ipServidor = '10.210.26.28';
+    $usuarioSSH = 'sshd';  // Reemplaza con el usuario de SSH del servidor
+
+    $ssh = new SSH2($ipServidor);
+    if (!$ssh->login($usuarioSSH, 'infinite123')) {
+        throw new \Exception('Error de conexión SSH al servidor.');
     }
+
+    $rutaBase = '/mnt/HD/HD_a2/PADBI_DEV/';
+    $subcarpeta = $request->input('ruta');
+    $rutaCompleta = $rutaBase . $subcarpeta;
+
+    // Ejecutar el comando `find` en el servidor remoto con la ruta completa
+    $comando = "find " . escapeshellarg($rutaCompleta) . " -type f";
+    $output = $ssh->exec($comando);
+
+    // Convierte la salida en un arreglo, dividiendo por líneas
+    $rutas = explode("\n", trim($output));
+
+    // Inicializa un arreglo para almacenar los archivos como binarios
+    $archivosCompletos = [];
+
+    // Recorre cada ruta y obtiene el archivo como un binario
+    foreach ($rutas as $rutaArchivo) {
+        if (!empty($rutaArchivo)) {
+            // Usar `cat` para obtener el archivo en binario
+            $archivoBinario = $ssh->exec("cat " . escapeshellarg($rutaArchivo));
+
+            // Codificar el archivo en base64 para transferirlo como un blob o archivo binario
+            $archivoBase64 = base64_encode($archivoBinario);
+
+            // Obtener el nombre del archivo
+            $nombreArchivo = basename($rutaArchivo);
+
+            $archivosCompletos[] = [
+                'ruta' => $rutaArchivo,
+                'nombre' => $nombreArchivo, // Nombre del archivo
+                'archivo' => $archivoBase64,  // Archivo en formato base64
+            ];
+        }
+    }
+
+    // Retornar los archivos como JSON con el contenido en base64
+    return response()->json($archivosCompletos);
+}
+
     
     
 }
