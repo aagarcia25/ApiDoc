@@ -635,7 +635,7 @@ class FilesController extends Controller
     return response()->json($archivosCompletos);
 }
 
-public function ListFileUploadFile(Request $request)
+  public function ListFileUploadFile(Request $request)
 {
     $SUCCESS = true;
     $NUMCODE = 0;
@@ -670,13 +670,16 @@ public function ListFileUploadFile(Request $request)
             // Usar `cat` para obtener el archivo en binario
             $archivoBinario = $ssh->exec("cat " . escapeshellarg($rutaArchivo));
 
+            // Codificar el contenido binario en base64 para evitar problemas de codificación UTF-8
+            $archivoBase64 = base64_encode($archivoBinario);
+
             // Obtener el nombre del archivo
             $nombreArchivo = basename($rutaArchivo);
 
             // Crear un "objeto" similar a `UploadFile`
             $archivoObjeto = new \stdClass();
             $archivoObjeto->filename = $nombreArchivo;
-            $archivoObjeto->content = $archivoBinario;  // Contenido binario del archivo
+            $archivoObjeto->content = $archivoBase64;  // Contenido en base64 del archivo
             $archivoObjeto->size = strlen($archivoBinario); // Tamaño del archivo en bytes
 
             $archivosCompletos[] = $archivoObjeto;
@@ -686,6 +689,7 @@ public function ListFileUploadFile(Request $request)
     // Retornar los archivos como JSON
     return response()->json($archivosCompletos);
 }
+
 
     
     
