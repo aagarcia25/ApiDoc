@@ -606,26 +606,26 @@ class FilesController extends Controller
         $comando = "find " . escapeshellarg($rutaCompleta) . " -type f";
         $output = $ssh->exec($comando);
 
-        // Convierte la salida en un arreglo, dividiendo por líneas
-        $rutas = explode("\n", trim($output));
+        // // Convierte la salida en un arreglo, dividiendo por líneas
+        // $rutas = explode("\n", trim($output));
 
-        // Inicializa un arreglo para almacenar el contenido de los archivos
-        $archivosCompletos = [];
+        // // Inicializa un arreglo para almacenar el contenido de los archivos
+        // $archivosCompletos = [];
 
-        // Recorre cada ruta y lee el contenido del archivo
-        foreach ($rutas as $rutaArchivo) {
-            if (!empty($rutaArchivo)) {
-                // Ejecutar el comando `cat` para obtener el contenido del archivo
-                $contenidoArchivo = $ssh->exec("cat " . escapeshellarg($rutaArchivo));
-                $archivosCompletos[] = [
-                    'ruta' => $rutaArchivo,
-                    'contenido' => $contenidoArchivo,
-                ];
-            }
-        }
+        // // Recorre cada ruta y lee el contenido del archivo
+        // foreach ($rutas as $rutaArchivo) {
+        //     if (!empty($rutaArchivo)) {
+        //         // Ejecutar el comando `cat` para obtener el contenido del archivo
+        //         $contenidoArchivo = $ssh->exec("cat " . escapeshellarg($rutaArchivo));
+        //         $archivosCompletos[] = [
+        //             'ruta' => $rutaArchivo,
+        //             'contenido' => $contenidoArchivo,
+        //         ];
+        //     }
+        // }
        
         
-        return response()->json($archivosCompletos);
+        return response()->json($output);
 
         
     }
