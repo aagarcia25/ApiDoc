@@ -635,6 +635,58 @@ class FilesController extends Controller
     return response()->json($archivosCompletos);
 }
 
+public function ListFileUploadFile(Request $request)
+{
+    $SUCCESS = true;
+    $NUMCODE = 0;
+    $STRMESSAGE = 'Exito';
+    $response = "";
+
+    $ipServidor = '10.210.26.28';
+    $usuarioSSH = 'sshd';  // Reemplaza con el usuario de SSH del servidor
+
+    $ssh = new SSH2($ipServidor);
+    if (!$ssh->login($usuarioSSH, 'infinite123')) {
+        throw new \Exception('Error de conexión SSH al servidor.');
+    }
+
+    $rutaBase = '/mnt/HD/HD_a2/PADBI_DEV/';
+    $subcarpeta = $request->input('ruta');
+    $rutaCompleta = $rutaBase . $subcarpeta;
+
+    // Ejecutar el comando `find` en el servidor remoto con la ruta completa
+    $comando = "find " . escapeshellarg($rutaCompleta) . " -type f";
+    $output = $ssh->exec($comando);
+
+    // Convierte la salida en un arreglo, dividiendo por líneas
+    $rutas = explode("\n", trim($output));
+
+    // Inicializa un arreglo para almacenar los archivos como objetos
+    $archivosCompletos = [];
+
+    // Recorre cada ruta y obtiene el archivo como un objeto similar a `UploadFile`
+    foreach ($rutas as $rutaArchivo) {
+        if (!empty($rutaArchivo)) {
+            // Usar `cat` para obtener el archivo en binario
+            $archivoBinario = $ssh->exec("cat " . escapeshellarg($rutaArchivo));
+
+            // Obtener el nombre del archivo
+            $nombreArchivo = basename($rutaArchivo);
+
+            // Crear un "objeto" similar a `UploadFile`
+            $archivoObjeto = new \stdClass();
+            $archivoObjeto->filename = $nombreArchivo;
+            $archivoObjeto->content = $archivoBinario;  // Contenido binario del archivo
+            $archivoObjeto->size = strlen($archivoBinario); // Tamaño del archivo en bytes
+
+            $archivosCompletos[] = $archivoObjeto;
+        }
+    }
+
+    // Retornar los archivos como JSON
+    return response()->json($archivosCompletos);
+}
+
     
     
 }
