@@ -103,58 +103,7 @@ class FilesController extends Controller
         );
     }
 
-    public function ListFile(Request $request)
-    {
-        $SUCCESS = true;
-        $NUMCODE = 0;
-        $STRMESSAGE = 'Exito';
-        $response = "";
-        $responseData = [];
-
-        try {
-
-            $ruta = $request->ROUTE;
-            $existe = Storage::exists($ruta);
-            if ($existe) {
-                if ($ruta != null) {
-                    $response = Storage::files($ruta);
-
-                    foreach ($response as $file) {
-                        $cadena = $file;
-                        $partes = explode('/', $cadena);
-
-                        $obj = new stdClass();
-                        $name = end($partes);
-                        $atachment = Storage::disk('sftp')->get($ruta . $name);
-                        $obj->NOMBRE = $name;
-                        $obj->NOMBREFORMATEADO = substr($name, 19);
-                        $obj->TIPO = Storage::mimeType($ruta . $name);
-                        $obj->SIZE = Storage::size($ruta . $name);
-                        $obj->FILE = base64_encode($atachment);
-
-                        $responseData[] = $obj;
-                    }
-                }
-            } else {
-                $response = "No Existe la Ruta Indicada";
-                throw new Exception($response);
-            }
-            $response = $responseData;
-        } catch (\Exception $e) {
-            $NUMCODE = 1;
-            $STRMESSAGE = $e->getMessage();
-            $SUCCESS = false;
-        }
-
-        return response()->json(
-            [
-                'NUMCODE' => $NUMCODE,
-                'STRMESSAGE' => $STRMESSAGE,
-                'RESPONSE' => $response,
-                'SUCCESS' => $SUCCESS,
-            ]
-        );
-    }
+    
 
     public function DeleteFile(Request $request)
     {
@@ -635,6 +584,59 @@ class FilesController extends Controller
     return response()->json($archivosCompletos);
 }
 
+public function ListFile(Request $request)
+    {
+        $SUCCESS = true;
+        $NUMCODE = 0;
+        $STRMESSAGE = 'Exito';
+        $response = "";
+        $responseData = [];
+
+        try {
+
+            $ruta = $request->ROUTE;
+            $existe = Storage::exists($ruta);
+            if ($existe) {
+                if ($ruta != null) {
+                    $response = Storage::files($ruta);
+
+                    foreach ($response as $file) {
+                        $cadena = $file;
+                        $partes = explode('/', $cadena);
+
+                        $obj = new stdClass();
+                        $name = end($partes);
+                        $atachment = Storage::disk('sftp')->get($ruta . $name);
+                        $obj->NOMBRE = $name;
+                        $obj->NOMBREFORMATEADO = substr($name, 19);
+                        $obj->TIPO = Storage::mimeType($ruta . $name);
+                        $obj->SIZE = Storage::size($ruta . $name);
+                        $obj->FILE = base64_encode($atachment);
+
+                        $responseData[] = $obj;
+                    }
+                }
+            } else {
+                $response = "No Existe la Ruta Indicada";
+                throw new Exception($response);
+            }
+            $response = $responseData;
+        } catch (\Exception $e) {
+            $NUMCODE = 1;
+            $STRMESSAGE = $e->getMessage();
+            $SUCCESS = false;
+        }
+
+        return response()->json(
+            [
+                'NUMCODE' => $NUMCODE,
+                'STRMESSAGE' => $STRMESSAGE,
+                'RESPONSE' => $response,
+                'SUCCESS' => $SUCCESS,
+            ]
+        );
+    }
+
   public function ListFileUploadFile(Request $request)
 {
     $SUCCESS = true;
@@ -667,10 +669,12 @@ class FilesController extends Controller
     // Recorre cada ruta y obtiene el archivo como un objeto similar a `UploadFile`
     foreach ($rutas as $rutaArchivo) {
         if (!empty($rutaArchivo)) {
-            // Usar `cat` para obtener el archivo en binario
+            // Usar `cat` para obtener el archivo en binario 
             $archivoBinario = $ssh->exec("cat " . escapeshellarg($rutaArchivo));
 
             // Codificar el contenido binario en base64 para evitar problemas de codificación UTF-8
+           
+
             $archivoBase64 = base64_encode($archivoBinario);
 
             // Obtener el nombre del archivo
@@ -681,7 +685,8 @@ class FilesController extends Controller
             $archivoObjeto->filename = $nombreArchivo;
             $archivoObjeto->content = $archivoBase64;  // Contenido en base64 del archivo
             $archivoObjeto->size = strlen($archivoBinario); // Tamaño del archivo en bytes
-
+            $archivoObjeto->binarySize = strlen($archivoBinario);
+            
             $archivosCompletos[] = $archivoObjeto;
         }
     }
