@@ -16,7 +16,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('ApiDoc')->group(function () {
     //Prefijo ApiDoc, todo lo que este dentro de este grupo se accedera escribiendo ApiDoc en el navegador, es decir /api/ApiDoc/*
+
     Route::get('validacion', [FilesController::class, 'validacion']);
+
+    Route::get('hola-mundo', function () {
+        return response()->json(['message' => 'Hola Mundo']);
+    });
 
     Route::group(['middleware' => ['jwt.verify']], function () {
         Route::post('ListFileSimple', [FilesController::class, 'ListFileSimple']);
