@@ -359,7 +359,7 @@ class FilesController extends Controller
                         $obj->NOMBREFORMATEADO = substr($name, 19);
                         $obj->ESCARPETA = false;
                         $obj->RUTA = $ruta  . '/' . $name;
-                        $obj->SIZE = Storage::size($ruta . $name);
+                        //$obj->SIZE = Storage::size($ruta . $name); El size aqui no deja subir .doc
 
                         $responseData[] = $obj;
                     }
