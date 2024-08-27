@@ -648,6 +648,8 @@ public function ListFile(Request $request)
     // Inicializa un arreglo para almacenar los archivos como objetos
     $archivosCompletos = [];
 
+    $rutas=['/mnt/HD/HD_a2/PADBI_DEV/9c7b91b6-1c4a-4fd4-bdf9-47d29b1dbe3c/Fotos/Carta intención de venta.pdf'];
+
     // Recorre cada ruta y obtiene el archivo como un objeto similar a `UploadFile`
     foreach ($rutas as $rutaArchivo) {
         if (!empty($rutaArchivo)) {
