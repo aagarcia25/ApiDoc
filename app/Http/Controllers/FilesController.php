@@ -658,7 +658,8 @@ public function ListFile(Request $request)
             $rutaDestino = str_replace('/mnt/HD/HD_a2/','',$rutaArchivo);
             if (Storage::disk('sftp')->exists($rutaDestino)) {
                 $atachment = Storage::disk('sftp')->get($rutaDestino);
-                $archivoObjeto->filename = Storage::disk('sftp')->mimeType($rutaDestino);
+                $archivoObjeto->filename = $nombreArchivo;
+                //Storage::disk('sftp')->mimeType($rutaDestino);
                 $archivoObjeto->size = Storage::disk('sftp')->size($rutaDestino);
                 $archivoObjeto->file = base64_encode($atachment);
                 $archivoObjeto->binarySize = strlen(base64_encode($atachment));
@@ -668,7 +669,12 @@ public function ListFile(Request $request)
                 $archivoObjeto->file = "";
                 $archivoObjeto->filename = $rutaDestino;
             }
-
+            // $archivoObjeto->filename = $nombreArchivo;
+            // $archivoObjeto->file = $archivoBase64;  // Contenido en base64 del archivo
+            // $archivoObjeto->size = strlen($archivoBinario); // Tamaño del archivo en bytes
+            // $archivoObjeto->binarySize = strlen($archivoBinario);
+            // $archivoObjeto->ruta = $rutaArchivo;
+           # $archivoObjeto->binaryContent = $archivoBinario; 
             $archivosCompletos[] = $archivoObjeto;
         } else {
             return response()->json($rutas);
