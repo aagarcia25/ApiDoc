@@ -668,6 +668,7 @@ public function ListFile(Request $request)
             $archivoObjeto->file = $archivoBase64;  // Contenido en base64 del archivo
             $archivoObjeto->size = strlen($archivoBinario); // Tamaño del archivo en bytes
             $archivoObjeto->binarySize = strlen($archivoBinario);
+            $archivoObjeto->ruta = $rutaArchivo;
            # $archivoObjeto->binaryContent = $archivoBinario; 
             $archivosCompletos[] = $archivoObjeto;
         }
@@ -679,5 +680,5 @@ public function ListFile(Request $request)
 
 
     
-    
+
 }
