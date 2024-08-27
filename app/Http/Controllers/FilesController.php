@@ -648,31 +648,30 @@ public function ListFile(Request $request)
     // Inicializa un arreglo para almacenar los archivos como objetos
     $archivosCompletos = [];
 
-    $rutas=['/mnt/HD/HD_a2/PADBI_DEV/9c7b91b6-1c4a-4fd4-bdf9-47d29b1dbe3c/Fotos/Carta intención de venta.pdf'];
-
-    // Recorre cada ruta y obtiene el archivo como un objeto similar a `UploadFile`
+    
     foreach ($rutas as $rutaArchivo) {
         if (!empty($rutaArchivo)) {
-            // Usar `cat` para obtener el archivo en binario 
-            $archivoBinario = $ssh->exec("cat " . escapeshellarg($rutaArchivo));
+            
 
-            // Codificar el contenido binario en base64 para evitar problemas de codificación UTF-8
-           
-
-            $archivoBase64 = base64_encode($archivoBinario);
-
-            // Obtener el nombre del archivo
-            $nombreArchivo = basename($rutaArchivo);
-
-            // Crear un "objeto" similar a `UploadFile`
             $archivoObjeto = new \stdClass();
-            $archivoObjeto->filename = $nombreArchivo;
-            $archivoObjeto->file = $archivoBase64;  // Contenido en base64 del archivo
-            $archivoObjeto->size = strlen($archivoBinario); // Tamaño del archivo en bytes
-            $archivoObjeto->binarySize = strlen($archivoBinario);
-            $archivoObjeto->ruta = $rutaArchivo;
-           # $archivoObjeto->binaryContent = $archivoBinario; 
+            // // Crear un "objeto" similar a `UploadFile`
+            $rutaDestino = str_replace('/mnt/HD/HD_a2/','',$rutaArchivo);
+            if (Storage::disk('sftp')->exists($rutaDestino)) {
+                $atachment = Storage::disk('sftp')->get($rutaDestino);
+                $archivoObjeto->filename = Storage::disk('sftp')->mimeType($rutaDestino);
+                $archivoObjeto->size = Storage::disk('sftp')->size($rutaDestino);
+                $archivoObjeto->file = base64_encode($atachment);
+                $archivoObjeto->binarySize = strlen(base64_encode($atachment));
+            } else {
+                $archivoObjeto->TIPO = "Error";
+                $archivoObjeto->size = "";
+                $archivoObjeto->file = "";
+                $archivoObjeto->filename = $rutaDestino;
+            }
+
             $archivosCompletos[] = $archivoObjeto;
+        } else {
+            return response()->json($rutas);
         }
     }
 
