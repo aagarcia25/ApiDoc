@@ -512,25 +512,6 @@ class FilesController extends Controller
         ]);
     }
 
-    // class CarpetaHijaObjet {
-        
-    //     public $NOMBRE;
-    //     public $NOMBREFORMATEADO;
-    //     public $ESCARPETA;
-    //     public $RUTA;
-    //     public $CARPETAHIJA;
-   
-    // }
-
-    // class JsonDocument {
-        
-    //     public $NOMBRE;
-    //     public $NOMBREFORMATEADO;
-    //     public $ESCARPETA;
-    //     public $RUTA;
-    //     public $JsonDocument[];
-   
-    // }
     public function ListFileFull(Request $request)
 {
     $SUCCESS = true;
