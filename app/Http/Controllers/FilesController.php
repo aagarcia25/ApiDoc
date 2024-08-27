@@ -648,10 +648,11 @@ public function ListFile(Request $request)
     $usuarioSSH = 'sshd';  // Reemplaza con el usuario de SSH del servidor
 
     $ssh = new SSH2($ipServidor);
+
     if (!$ssh->login($usuarioSSH, 'infinite123')) {
         throw new \Exception('Error de conexión SSH al servidor.');
     }
-
+        
     $rutaBase = '/mnt/HD/HD_a2/PADBI_DEV/';
     $subcarpeta = $request->input('ruta');
     $rutaCompleta = $rutaBase . $subcarpeta;
@@ -683,10 +684,10 @@ public function ListFile(Request $request)
             // Crear un "objeto" similar a `UploadFile`
             $archivoObjeto = new \stdClass();
             $archivoObjeto->filename = $nombreArchivo;
-            $archivoObjeto->content = $archivoBase64;  // Contenido en base64 del archivo
+            $archivoObjeto->file = $archivoBase64;  // Contenido en base64 del archivo
             $archivoObjeto->size = strlen($archivoBinario); // Tamaño del archivo en bytes
             $archivoObjeto->binarySize = strlen($archivoBinario);
-            #$archivoObjeto->binaryContent = $archivoBinario; 
+           # $archivoObjeto->binaryContent = $archivoBinario; 
             $archivosCompletos[] = $archivoObjeto;
         }
     }
