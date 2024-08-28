@@ -103,58 +103,7 @@ class FilesController extends Controller
         );
     }
 
-    public function ListFile(Request $request)
-    {
-        $SUCCESS = true;
-        $NUMCODE = 0;
-        $STRMESSAGE = 'Exito';
-        $response = "";
-        $responseData = [];
-
-        try {
-
-            $ruta = $request->ROUTE;
-            $existe = Storage::exists($ruta);
-            if ($existe) {
-                if ($ruta != null) {
-                    $response = Storage::files($ruta);
-
-                    foreach ($response as $file) {
-                        $cadena = $file;
-                        $partes = explode('/', $cadena);
-
-                        $obj = new stdClass();
-                        $name = end($partes);
-                        $atachment = Storage::disk('sftp')->get($ruta . $name);
-                        $obj->NOMBRE = $name;
-                        $obj->NOMBREFORMATEADO = substr($name, 19);
-                        $obj->TIPO = Storage::mimeType($ruta . $name);
-                        $obj->SIZE = Storage::size($ruta . $name);
-                        $obj->FILE = base64_encode($atachment);
-
-                        $responseData[] = $obj;
-                    }
-                }
-            } else {
-                $response = "No Existe la Ruta Indicada";
-                throw new Exception($response);
-            }
-            $response = $responseData;
-        } catch (\Exception $e) {
-            $NUMCODE = 1;
-            $STRMESSAGE = $e->getMessage();
-            $SUCCESS = false;
-        }
-
-        return response()->json(
-            [
-                'NUMCODE' => $NUMCODE,
-                'STRMESSAGE' => $STRMESSAGE,
-                'RESPONSE' => $response,
-                'SUCCESS' => $SUCCESS,
-            ]
-        );
-    }
+    
 
     public function DeleteFile(Request $request)
     {
@@ -364,6 +313,8 @@ class FilesController extends Controller
         );
     }
 
+  
+
     public function ListFileSimple(Request $request)
     {
         $SUCCESS = true;
@@ -397,8 +348,6 @@ class FilesController extends Controller
                         $responseData[] = $obj;
                     }
 
-
-
                     $response = Storage::files($ruta);
                     foreach ($response as $file) {
                         $cadena = $file;
@@ -410,11 +359,12 @@ class FilesController extends Controller
                         $obj->NOMBREFORMATEADO = substr($name, 19);
                         $obj->ESCARPETA = false;
                         $obj->RUTA = $ruta  . '/' . $name;
-                        $obj->SIZE = Storage::size($ruta . $name);
+                        //$obj->SIZE = Storage::size($ruta . $name); El size aqui no deja subir .doc
 
                         $responseData[] = $obj;
                     }
                 }
+
             } else {
                 $response = "No Existe la Ruta Indicada";
                 throw new Exception($response);
@@ -523,6 +473,7 @@ class FilesController extends Controller
 
             Log::info("Ruta Origen: " . trim(env('APP_DOC_ROUTE') . $rutaOrigen));
             Log::info("Ruta DESTINO: " . trim(env('APP_DOC_ROUTE') . $rutaDestino));
+
             $ipServidor = '10.210.26.28';
             $usuarioSSH = 'sshd';  // Reemplaza con el usuario de SSH del servidor
 
@@ -560,4 +511,182 @@ class FilesController extends Controller
             'SUCCESS' => $SUCCESS,
         ]);
     }
+
+    public function ListFileFull(Request $request)
+{
+    $SUCCESS = true;
+    $NUMCODE = 0;
+    $STRMESSAGE = 'Exito';
+    $response = "";
+
+    $ipServidor = '10.210.26.28';
+    $usuarioSSH = 'sshd';  // Reemplaza con el usuario de SSH del servidor
+
+    $ssh = new SSH2($ipServidor);
+    if (!$ssh->login($usuarioSSH, 'infinite123')) {
+        throw new \Exception('Error de conexión SSH al servidor.');
+    }
+
+    $rutaBase = '/mnt/HD/HD_a2/PADBI_DEV/';
+    $subcarpeta = $request->input('ruta');
+    $rutaCompleta = $rutaBase . $subcarpeta;
+
+    // Ejecutar el comando `find` en el servidor remoto con la ruta completa
+    $comando = "find " . escapeshellarg($rutaCompleta) . " -type f";
+    $output = $ssh->exec($comando);
+
+    // Convierte la salida en un arreglo, dividiendo por líneas
+    $rutas = explode("\n", trim($output));
+
+    // Inicializa un arreglo para almacenar los archivos como binarios
+    $archivosCompletos = [];
+
+    // Recorre cada ruta y obtiene el archivo como un binario
+    foreach ($rutas as $rutaArchivo) {
+        if (!empty($rutaArchivo)) {
+            // Usar `cat` para obtener el archivo en binario
+            $archivoBinario = $ssh->exec("cat " . escapeshellarg($rutaArchivo));
+
+            // Codificar el archivo en base64 para transferirlo como un blob o archivo binario
+            $archivoBase64 = base64_encode($archivoBinario);
+
+            // Obtener el nombre del archivo
+            $nombreArchivo = basename($rutaArchivo);
+
+            $archivosCompletos[] = [
+                'ruta' => $rutaArchivo,
+                'nombre' => $nombreArchivo, // Nombre del archivo
+                'archivo' => $archivoBase64,  // Archivo en formato base64
+            ];
+        }
+    }
+
+    // Retornar los archivos como JSON con el contenido en base64
+    return response()->json($archivosCompletos);
+}
+
+public function ListFile(Request $request)
+    {
+        $SUCCESS = true;
+        $NUMCODE = 0;
+        $STRMESSAGE = 'Exito';
+        $response = "";
+        $responseData = [];
+
+        try {
+
+            $ruta = $request->ROUTE;
+            $existe = Storage::exists($ruta);
+            if ($existe) {
+                if ($ruta != null) {
+                    $response = Storage::files($ruta);
+
+                    foreach ($response as $file) {
+                        $cadena = $file;
+                        $partes = explode('/', $cadena);
+
+                        $obj = new stdClass();
+                        $name = end($partes);
+                        $atachment = Storage::disk('sftp')->get($ruta . $name);
+                        $obj->NOMBRE = $name;
+                        $obj->NOMBREFORMATEADO = substr($name, 19);
+                        $obj->TIPO = Storage::mimeType($ruta . $name);
+                        $obj->SIZE = Storage::size($ruta . $name);
+                        $obj->FILE = base64_encode($atachment);
+
+                        $responseData[] = $obj;
+                    }
+                }
+            } else {
+                $response = "No Existe la Ruta Indicada";
+                throw new Exception($response);
+            }
+            $response = $responseData;
+        } catch (\Exception $e) {
+            $NUMCODE = 1;
+            $STRMESSAGE = $e->getMessage();
+            $SUCCESS = false;
+        }
+
+        return response()->json(
+            [
+                'NUMCODE' => $NUMCODE,
+                'STRMESSAGE' => $STRMESSAGE,
+                'RESPONSE' => $response,
+                'SUCCESS' => $SUCCESS,
+            ]
+        );
+    }
+
+  public function ListFileUploadFile(Request $request)
+{
+    $SUCCESS = true;
+    $NUMCODE = 0;
+    $STRMESSAGE = 'Exito';
+    $response = "";
+
+    $ipServidor = '10.210.26.28';
+    $usuarioSSH = 'sshd';  // Reemplaza con el usuario de SSH del servidor
+
+    $ssh = new SSH2($ipServidor);
+
+    if (!$ssh->login($usuarioSSH, 'infinite123')) {
+        throw new \Exception('Error de conexión SSH al servidor.');
+    }
+        
+    $rutaBase = '/mnt/HD/HD_a2/PADBI_DEV/';
+    $subcarpeta = $request->input('ruta');
+    $rutaCompleta = $rutaBase . $subcarpeta;
+
+    // Ejecutar el comando `find` en el servidor remoto con la ruta completa
+    $comando = "find " . escapeshellarg($rutaCompleta) . " -type f";
+    $output = $ssh->exec($comando);
+
+    // Convierte la salida en un arreglo, dividiendo por líneas
+    $rutas = explode("\n", trim($output));
+
+    // Inicializa un arreglo para almacenar los archivos como objetos
+    $archivosCompletos = [];
+
+    // $rutas=['PADBI_DEV/9c7b91b6-1c4a-4fd4-bdf9-47d29b1dbe3c/Fotos/Carta intención de venta.pdf'];
+    
+    // Recorre cada ruta y obtiene el archivo como un objeto similar a `UploadFile`
+    foreach ($rutas as $rutaArchivo) {
+        if (!empty($rutaArchivo)) {
+            
+
+            $archivoObjeto = new \stdClass();
+            // // Crear un "objeto" similar a `UploadFile`
+            $rutaDestino = str_replace('/mnt/HD/HD_a2/','',$rutaArchivo);
+            if (Storage::disk('sftp')->exists($rutaDestino)) {
+                $atachment = Storage::disk('sftp')->get($rutaDestino);
+                $archivoObjeto->filename = basename($rutaDestino);
+                $archivoObjeto->size = Storage::disk('sftp')->size($rutaDestino);
+                $archivoObjeto->file = base64_encode($atachment);
+                $archivoObjeto->binarySize = strlen(base64_encode($atachment));
+            } else {
+                $archivoObjeto->TIPO = "Error";
+                $archivoObjeto->size = "";
+                $archivoObjeto->file = "";
+                $archivoObjeto->filename = $rutaDestino;
+            }
+            // $archivoObjeto->filename = $nombreArchivo;
+            // $archivoObjeto->file = $archivoBase64;  // Contenido en base64 del archivo
+            // $archivoObjeto->size = strlen($archivoBinario); // Tamaño del archivo en bytes
+            // $archivoObjeto->binarySize = strlen($archivoBinario);
+            // $archivoObjeto->ruta = $rutaArchivo;
+           # $archivoObjeto->binaryContent = $archivoBinario; 
+            $archivosCompletos[] = $archivoObjeto;
+        } else {
+            return response()->json($rutas);
+        }
+    }
+
+    // Retornar los archivos como JSON
+    return response()->json($archivosCompletos);
+}
+
+
+    
+
 }
