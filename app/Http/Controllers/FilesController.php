@@ -638,7 +638,7 @@ public function ListFile(Request $request)
     $rutaBase = '/mnt/HD/HD_a2/'.$request->input('carpeta');
     $subcarpeta = $request->input('ruta');
     $rutaCompleta = $rutaBase . $subcarpeta;
-
+    #echo $rutaBase;
     // Ejecutar el comando `find` en el servidor remoto con la ruta completa
     $comando = "find " . escapeshellarg($rutaCompleta) . " -type f";
     $output = $ssh->exec($comando);
@@ -670,6 +670,9 @@ public function ListFile(Request $request)
                 $archivoObjeto->size = "";
                 $archivoObjeto->file = "";
                 $archivoObjeto->filename = $rutaDestino;
+                $archivoObjeto->fileroute = $rutaCompleta;
+                $archivoObjeto->fileroutebase = $rutaBase;
+              
             }
             // $archivoObjeto->filename = $nombreArchivo;
             // $archivoObjeto->file = $archivoBase64;  // Contenido en base64 del archivo
