@@ -635,7 +635,7 @@ public function ListFile(Request $request)
     }
         
    # $rutaBase = '/mnt/HD/HD_a2/PADBI_DEV/';
-    $rutaBase = '/mnt/HD/HD_a2/'.$request->input('carpeta');
+    $rutaBase = '/mnt/HD/HD_a2/' . $request->input('carpeta');
     $subcarpeta = $request->input('ruta');
     $rutaCompleta = $rutaBase . $subcarpeta;
     #echo $rutaBase;
