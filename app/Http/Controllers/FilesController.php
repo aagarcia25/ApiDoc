@@ -634,7 +634,8 @@ public function ListFile(Request $request)
         throw new \Exception('Error de conexión SSH al servidor.');
     }
         
-    $rutaBase = '/mnt/HD/HD_a2/PADBI_DEV/';
+   # $rutaBase = '/mnt/HD/HD_a2/PADBI_DEV/';
+    $rutaBase = '/mnt/HD/HD_a2/'.$request->input('carpeta');
     $subcarpeta = $request->input('ruta');
     $rutaCompleta = $rutaBase . $subcarpeta;
 
