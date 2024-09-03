@@ -673,8 +673,8 @@ public function ListFile(Request $request)
                 $archivoObjeto->size = "";
                 $archivoObjeto->file = "";
                 $archivoObjeto->filename = $rutaDestino;
-                $archivoObjeto->fileroute = $rutaCompleta;
-                $archivoObjeto->fileroutebase = $rutaBase;
+               # $archivoObjeto->fileroute = $rutaCompleta;
+                #$archivoObjeto->fileroutebase = $rutaBase;
             }
             // $archivoObjeto->filename = $nombreArchivo;
             // $archivoObjeto->file = $archivoBase64;  // Contenido en base64 del archivo
