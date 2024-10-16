@@ -665,6 +665,7 @@ public function ListFile(Request $request)
             if (Storage::disk('sftp')->exists($rutaDestino)) {
                 $atachment = Storage::disk('sftp')->get($rutaDestino);
                 $archivoObjeto->filename = basename($rutaDestino);
+                $archivoObjeto->fileroute = $rutaDestino;
                 $archivoObjeto->size = Storage::disk('sftp')->size($rutaDestino);
                 $archivoObjeto->file = base64_encode($atachment);
                 $archivoObjeto->binarySize = strlen(base64_encode($atachment));
