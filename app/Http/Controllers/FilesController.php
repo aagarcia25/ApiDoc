@@ -662,10 +662,11 @@ public function ListFile(Request $request)
             $archivoObjeto = new \stdClass();
             // // Crear un "objeto" similar a `UploadFile`
             $rutaDestino = str_replace('/mnt/HD/HD_a2/','',$rutaArchivo);
+            $rutaLocal = str_replace($rutaBase,'',$rutaArchivo);
             if (Storage::disk('sftp')->exists($rutaDestino)) {
                 $atachment = Storage::disk('sftp')->get($rutaDestino);
                 $archivoObjeto->filename = basename($rutaDestino);
-                $archivoObjeto->fileroute = $rutaDestino;
+                $archivoObjeto->fileroute = $rutaLocal;
                 $archivoObjeto->size = Storage::disk('sftp')->size($rutaDestino);
                 $archivoObjeto->file = base64_encode($atachment);
                 $archivoObjeto->binarySize = strlen(base64_encode($atachment));
