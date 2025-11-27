@@ -438,7 +438,7 @@ class FilesController extends Controller
 
             // Conexión SSH al servidor
             $ssh = new SSH2($ipServidor);
-            if (!$ssh->login($usuarioSSH, 'UY-fDyvbra')) {
+            if (!$ssh->login($usuarioSSH, 'uMovYuAUE:4hx6fq')) {
                 throw new \Exception('Error de conexión SSH al servidor.');
             }
 
@@ -481,7 +481,7 @@ class FilesController extends Controller
 
             // Conexión SSH al servidor
             $ssh = new SSH2($ipServidor);
-            if (!$ssh->login($usuarioSSH, 'UY-fDyvbra')) {
+            if (!$ssh->login($usuarioSSH, 'uMovYuAUE:4hx6fq')) {
                 throw new \Exception('Error de conexión SSH al servidor.');
             }
 
@@ -525,7 +525,7 @@ class FilesController extends Controller
     $usuarioSSH = 'sshd';  // Reemplaza con el usuario de SSH del servidor
 
     $ssh = new SSH2($ipServidor);
-    if (!$ssh->login($usuarioSSH, 'UY-fDyvbra')) {
+    if (!$ssh->login($usuarioSSH, 'uMovYuAUE:4hx6fq')) {
         throw new \Exception('Error de conexión SSH al servidor.');
     }
 
@@ -632,7 +632,7 @@ public function ListFile(Request $request)
 
     $ssh = new SSH2($ipServidor);
 
-    if (!$ssh->login($usuarioSSH, 'UY-fDyvbra')) {
+    if (!$ssh->login($usuarioSSH, 'uMovYuAUE:4hx6fq')) {
         throw new \Exception('Error de conexión SSH al servidor.');
     }
 

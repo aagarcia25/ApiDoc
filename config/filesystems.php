@@ -74,7 +74,7 @@ return [
             'driver' => 'sftp',
             'host' => '10.210.26.28',
             'username' => 'sshd',
-            'password' => 'UY-fDyvbra',
+            'password' => 'uMovYuAUE:4hx6fq',
             'port' => 22, // El puerto predeterminado para SFTP es 22
             'root' => '/mnt/HD/HD_a2/', // Ruta raíz en el servidor remoto
             'timeout' => 5000,
