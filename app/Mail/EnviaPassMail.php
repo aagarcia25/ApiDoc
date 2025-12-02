@@ -33,7 +33,8 @@ class EnviaPassMail extends Mailable
      */
     public function build()
     {
-        return $this->subject($this->tipo === 'bienvenido' ? 'Bienvenido a la plataforma' : 'Restablecimiento de contraseña')
-                    ->view('correo.usuario');
+        return $this->from(config('mail.from.address'), 'Tesorería Virtual')
+            ->subject($this->tipo === 'bienvenido' ? 'Bienvenido a la plataforma' : 'Restablecimiento de contraseña')
+            ->view('correo.usuario');
     }
 }
