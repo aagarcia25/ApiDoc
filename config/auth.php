@@ -42,9 +42,8 @@ return [
         ],
 
         'api' => [
-            'driver' => 'jwt',
+            'driver' => 'session', // o cualquier driver que no intente buscar api_token
             'provider' => 'users',
-            'hash' => false,
         ],
     ],
 

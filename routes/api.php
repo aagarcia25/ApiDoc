@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\FilesController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CorreoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,4 +36,11 @@ Route::prefix('ApiDoc')->group(function () {
         Route::post('ListFileFull', [FilesController::class, 'ListFileFull']);
         Route::post('ListFileUploadFile', [FilesController::class, 'ListFileUploadFile']);
     });
+});
+
+
+Route::prefix('correo')->middleware('jwt.auth')->group(function () {
+    Route::get('/', [CorreoController::class, 'index']); // ejemplo: lista
+    Route::post('/envia-pass', [CorreoController::class, 'enviaPass']); // ejemplo: enviar correo
+    // agrega más endpoints aquí...
 });
