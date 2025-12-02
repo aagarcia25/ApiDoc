@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Mail\EnviaPassMail;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
+
 
 
 class CorreoController extends Controller
@@ -31,15 +33,43 @@ class CorreoController extends Controller
     {
         $jwtUser = $request->attributes->get('jwt_user');
 
+        $validator = Validator::make($request->all(), [
+            'usuario' => 'required|string',
+            'correo'  => 'required|email',
+            'password' => 'required|string',
+            'tipo'    => 'required|in:bienvenido,restablecido',
+        ]);
+
+        if ($validator->fails()) {
+            $detalles = collect($validator->errors()->messages())->map(function($msgs, $field){
+                switch($field){
+                    case 'correo':
+                        return ['Correo inválido'];
+                    case 'tipo':
+                        return ['Tipo inválido'];
+                    case 'usuario':
+                        return ['Usuario inválido'];
+                    case 'password':
+                        return ['Password requerido'];
+                    default:
+                        return [$msgs[0]];
+                }
+            });
+
+            return response()->json([
+                'error' => 'Datos inválidos',
+                'detalles' => $detalles
+            ], 418);
+        }
+
         $userInfo = [
             'IdUsuario'     => $jwtUser['IdUsuario'] ?? null,
-            'NombreUsuario' => $jwtUser['NombreUsuario'] ?? null,
+            'NombreUsuario' => $request->input('usuario'),
             'Correo'        => $request->input('correo'),
             'Password'      => $request->input('password') ?? '********', 
             'Tipo'          => $request->input('tipo') ?? 'bienvenido', 
         ];
 
-        // Enviar correo
         Mail::to($userInfo['Correo'])->send(
             new EnviaPassMail(
                 $userInfo['NombreUsuario'],
@@ -53,7 +83,7 @@ class CorreoController extends Controller
         return response()->json([
             'ok' => true,
             'mensaje' => 'Correo enviado correctamente',
-            'desde_usuario' => $userInfo['Correo'],
+            'desde_usuario' => $jwtUser['NombreUsuario'] ?? null,
             'payload' => $request->all()
         ]);
     }
