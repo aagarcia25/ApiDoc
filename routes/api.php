@@ -17,25 +17,22 @@ use App\Http\Controllers\CorreoController;
 
 Route::prefix('ApiDoc')->group(function () {
     //Prefijo ApiDoc, todo lo que este dentro de este grupo se accedera escribiendo ApiDoc en el navegador, es decir /api/ApiDoc/*
-
     Route::get('validacion', [FilesController::class, 'validacion']);
+    Route::post('ListFileSimple', [FilesController::class, 'ListFileSimple']);
+    Route::post('DeleteFileSimple', [FilesController::class, 'DeleteFileSimple']);
+    Route::post('ListFile', [FilesController::class, 'ListFile']);
+    Route::post('SaveFile', [FilesController::class, 'SaveFile']);
+    Route::post('GetByName', [FilesController::class, 'GetByName']);
+    Route::post('DeleteFile', [FilesController::class, 'DeleteFile']);
+    Route::post('DeleteFileByRoute', [FilesController::class, 'DeleteFileByRoute']);
+    Route::post('GetByRoute', [FilesController::class, 'GetByRoute']);
+    Route::post('DeleteDirectorio', [FilesController::class, 'DeleteDirectorio']);
+    Route::post('CreateDirectorio', [FilesController::class, 'CreateDirectorio']);
+    Route::post('moverArchivos', [FilesController::class, 'moverArchivos']);
+    Route::post('VerificaMueveArchivos', [FilesController::class, 'VerificaMueveArchivos']);
+    Route::post('ListFileFull', [FilesController::class, 'ListFileFull']);
+    Route::post('ListFileUploadFile', [FilesController::class, 'ListFileUploadFile']);
 
-    Route::group(['middleware' => ['jwt.verify']], function () {
-        Route::post('ListFileSimple', [FilesController::class, 'ListFileSimple']);
-        Route::post('DeleteFileSimple', [FilesController::class, 'DeleteFileSimple']);
-        Route::post('ListFile', [FilesController::class, 'ListFile']);
-        Route::post('SaveFile', [FilesController::class, 'SaveFile']);
-        Route::post('GetByName', [FilesController::class, 'GetByName']);
-        Route::post('DeleteFile', [FilesController::class, 'DeleteFile']);
-        Route::post('DeleteFileByRoute', [FilesController::class, 'DeleteFileByRoute']);
-        Route::post('GetByRoute', [FilesController::class, 'GetByRoute']);
-        Route::post('DeleteDirectorio', [FilesController::class, 'DeleteDirectorio']);
-        Route::post('CreateDirectorio', [FilesController::class, 'CreateDirectorio']);
-        Route::post('moverArchivos', [FilesController::class, 'moverArchivos']);
-        Route::post('VerificaMueveArchivos', [FilesController::class, 'VerificaMueveArchivos']);
-        Route::post('ListFileFull', [FilesController::class, 'ListFileFull']);
-        Route::post('ListFileUploadFile', [FilesController::class, 'ListFileUploadFile']);
-    });
 });
 
 
