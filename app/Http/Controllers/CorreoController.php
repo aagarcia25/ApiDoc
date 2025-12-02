@@ -29,9 +29,9 @@ class CorreoController extends Controller
         ]);
     }
 
-    public function enviaPass(Request $request)
-    {
-        $jwtUser = $request->attributes->get('jwt_user');
+    public function enviaPass(Request $request) 
+    { 
+        $jwtUser = $request->attributes->get('jwt_user'); 
 
         $validator = Validator::make($request->all(), [
             'usuario' => 'required|string',
@@ -51,40 +51,66 @@ class CorreoController extends Controller
                         return ['Usuario inválido'];
                     case 'password':
                         return ['Password requerido'];
-                    default:
-                        return [$msgs[0]];
-                }
-            });
+                    default: 
+                        return [$msgs[0]]; 
+                } 
+            }); 
+
+            return response()->json([ 
+                'error' => 'Datos inválidos', 
+                'detalles' => $detalles 
+            ], 418); 
+        } 
+
+        $userInfo = [ 
+            'IdUsuario'     => $jwtUser['IdUsuario'] ?? null, 
+            'NombreUsuario' => $request->input('usuario'), 
+            'Correo'        => $request->input('correo'), 
+            'Password'      => $request->input('password') ?? '********',  
+            'Tipo'          => $request->input('tipo') ?? 'bienvenido',  
+        ]; 
+
+        try {
+            Mail::to($userInfo['Correo'])->send( 
+                new EnviaPassMail( 
+                    $userInfo['NombreUsuario'], 
+                    $userInfo['Correo'], 
+                    $userInfo['Password'], 
+                    $userInfo['Tipo'], 
+                    $userInfo['Tipo'] == 'bienvenido' ? 'Bienvenido' : 'Hola' 
+                ) 
+            );
+
+            // Log de envío exitoso
+            \Log::channel('correos')->info('Correo enviado', [
+                'usuario' => $userInfo['NombreUsuario'],
+                'correo'  => $userInfo['Correo'],
+                'tipo'    => $userInfo['Tipo'],
+                'status'  => 'ok'
+            ]);
+
+            return response()->json([ 
+                'ok' => true, 
+                'mensaje' => 'Correo enviado correctamente', 
+                'desde_usuario' => $jwtUser['NombreUsuario'] ?? null, 
+                'payload' => $request->all() 
+            ]); 
+
+        } catch (\Exception $e) {
+            // Log de error
+            \Log::channel('correos')->error('Error al enviar correo', [
+                'usuario' => $userInfo['NombreUsuario'],
+                'correo'  => $userInfo['Correo'],
+                'tipo'    => $userInfo['Tipo'],
+                'error'   => $e->getMessage()
+            ]);
 
             return response()->json([
-                'error' => 'Datos inválidos',
-                'detalles' => $detalles
-            ], 418);
+                'ok' => false,
+                'mensaje' => 'Error al enviar correo',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $userInfo = [
-            'IdUsuario'     => $jwtUser['IdUsuario'] ?? null,
-            'NombreUsuario' => $request->input('usuario'),
-            'Correo'        => $request->input('correo'),
-            'Password'      => $request->input('password') ?? '********', 
-            'Tipo'          => $request->input('tipo') ?? 'bienvenido', 
-        ];
-
-        Mail::to($userInfo['Correo'])->send(
-            new EnviaPassMail(
-                $userInfo['NombreUsuario'],
-                $userInfo['Correo'],
-                $userInfo['Password'],
-                $userInfo['Tipo'],
-                $userInfo['Tipo'] == 'bienvenido' ? 'Bienvenido' : 'Hola'
-            )
-        );
-
-        return response()->json([
-            'ok' => true,
-            'mensaje' => 'Correo enviado correctamente',
-            'desde_usuario' => $jwtUser['NombreUsuario'] ?? null,
-            'payload' => $request->all()
-        ]);
     }
+
 }

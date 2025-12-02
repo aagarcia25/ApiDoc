@@ -117,6 +117,16 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+        'correos' => [
+            'driver' => 'monolog',
+            'level' => 'info',
+            'handler' => Monolog\Handler\StreamHandler::class,
+            'with' => [
+                'stream' => storage_path('logs/correos/correos-' . date('d-m-y') . '.log'),
+            ],
+        ],
+
+
     ],
 
 ];
