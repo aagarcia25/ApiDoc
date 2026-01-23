@@ -123,7 +123,7 @@ class CorreoController extends Controller
         if ($total >= 160) {
             return response()->json([
                 'ok' => false,
-                'mensaje' => 'Ya no hay registros disponibles'
+                'message' => 'Ya no hay registros disponibles'
             ], 418);
         }
 
@@ -173,13 +173,14 @@ class CorreoController extends Controller
 
             return response()->json([
                 'ok' => false,
-                'mensaje' => 'No se pudo enviar el correo'
+                'message' => 'No se pudo enviar el correo',
+                'error' => $e->getMessage()
             ], 500);
         }
 
         return response()->json([
             'ok' => true,
-            'mensaje' => 'Registro enviado correctamente'
+            'message' => 'Registro enviado correctamente'
         ]);
     }
 
