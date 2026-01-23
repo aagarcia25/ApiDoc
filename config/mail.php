@@ -45,6 +45,17 @@ return [
             'local_domain' => env('MAIL_EHLO_DOMAIN'),
         ],
 
+        'talleres' => [
+            'transport' => 'smtp',
+            'host' => env('MAIL_TALLER_HOST'),
+            'port' => env('MAIL_TALLER_PORT'),
+            'encryption' => env('MAIL_TALLER_ENCRYPTION'),
+            'username' => env('MAIL_TALLER_USERNAME'),
+            'password' => env('MAIL_TALLER_PASSWORD'),
+            'timeout' => null,
+            'local_domain' => env('MAIL_EHLO_DOMAIN'),
+        ],
+
         'ses' => [
             'transport' => 'ses',
         ],

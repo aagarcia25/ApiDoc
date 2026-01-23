@@ -34,10 +34,10 @@ Route::prefix('ApiDoc')->group(function () {
     Route::post('ListFileUploadFile', [FilesController::class, 'ListFileUploadFile']);
     
     Route::prefix('correo')->middleware('jwt.auth')->group(function () {
-        Route::get('/', [CorreoController::class, 'index']); // ejemplo: lista
-        Route::post('/envia-pass', [CorreoController::class, 'enviaPass']); // ejemplo: enviar correo
-        // agrega más endpoints aquí...
+        Route::get('/', [CorreoController::class, 'index']);
+        Route::post('/envia-pass', [CorreoController::class, 'enviaPass']);
     });
+    Route::post('/correo/registro-taller-de-integracion', [CorreoController::class, 'registroTaller']);
 
 });
 

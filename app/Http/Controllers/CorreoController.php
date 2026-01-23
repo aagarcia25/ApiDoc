@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Mail\EnviaPassMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use App\Mail\RegistroTallerMail;
 
 
 
@@ -111,6 +112,30 @@ class CorreoController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function registroTaller(Request $request)
+    {
+        $data = $request->validate([
+            'nombre'     => 'required|string',
+            'aPaterno'   => 'required|string',
+            'aMaterno'   => 'required|string',
+            'cargo'      => 'required|string',
+            'ente'       => 'required|string',
+            'correo'     => 'required|email',
+            'telefono'   => 'required|string',
+            'captchaToken' => 'nullable|string',
+        ]);
+
+        // Enviar correo usando mailer "talleres"
+        Mail::mailer('talleres')
+            ->to($data['correo'])
+            ->send(new RegistroTallerMail($data));
+
+        return response()->json([
+            'ok' => true,
+            'mensaje' => 'Registro enviado correctamente'
+        ]);
     }
 
 }
