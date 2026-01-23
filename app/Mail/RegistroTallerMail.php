@@ -25,7 +25,7 @@ class RegistroTallerMail extends Mailable
                 env('MAIL_TALLER_NAME')
             )
             ->subject('Registro - Taller de Integración')
-            ->view('emails.taller')
+            ->view('correo.taller')
             ->with($this->data);
     }
 }
