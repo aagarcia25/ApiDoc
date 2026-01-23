@@ -7,6 +7,7 @@ use App\Mail\EnviaPassMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use App\Mail\RegistroTallerMail;
+use Illuminate\Support\Facades\DB;
 
 
 
@@ -116,21 +117,65 @@ class CorreoController extends Controller
 
     public function registroTaller(Request $request)
     {
+        // Validar límite
+        $total = DB::table('correos')->count();
+
+        if ($total >= 160) {
+            return response()->json([
+                'ok' => false,
+                'mensaje' => 'Ya no hay registros disponibles'
+            ], 418);
+        }
+
+        // Validación
         $data = $request->validate([
-            'nombre'     => 'required|string',
-            'aPaterno'   => 'required|string',
-            'aMaterno'   => 'required|string',
-            'cargo'      => 'required|string',
-            'ente'       => 'required|string',
-            'correo'     => 'required|email',
-            'telefono'   => 'required|string',
+            'nombre'       => 'required|string',
+            'aPaterno'     => 'required|string',
+            'aMaterno'     => 'required|string',
+            'cargo'        => 'required|string',
+            'ente'         => 'required|string',
+            'correo'       => 'required|email',
+            'telefono'     => 'required|string',
             'captchaToken' => 'nullable|string',
         ]);
 
-        // Enviar correo usando mailer "talleres"
-        Mail::mailer('talleres')
-            ->to($data['correo'])
-            ->send(new RegistroTallerMail($data));
+        // Insertar primero
+        $correoId = DB::table('correos')->insertGetId([
+            'nombre'      => $data['nombre'],
+            'a_paterno'   => $data['aPaterno'],
+            'a_materno'   => $data['aMaterno'],
+            'cargo'       => $data['cargo'],
+            'ente'        => $data['ente'],
+            'correo'      => $data['correo'],
+            'telefono'    => $data['telefono'],
+            'status_envio'=> 'OK',
+            'created_at'  => now(),
+            'updated_at'  => now(),
+        ]);
+
+        // Envío de correo
+        try {
+            Mail::mailer('talleres')
+                ->to($data['correo'])
+                ->bcc([
+                    'jabustos@cecapmex.com',
+                    'taller.integracion@nuevoleon.gob.mx',
+                ])
+                ->send(new RegistroTallerMail($data));
+        } catch (\Throwable $e) {
+
+            DB::table('correos')
+                ->where('id', $correoId)
+                ->update([
+                    'status_envio' => 'ERR',
+                    'updated_at' => now()
+                ]);
+
+            return response()->json([
+                'ok' => false,
+                'mensaje' => 'No se pudo enviar el correo'
+            ], 500);
+        }
 
         return response()->json([
             'ok' => true,
