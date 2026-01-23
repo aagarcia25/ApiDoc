@@ -128,8 +128,7 @@ class CorreoController extends Controller
         ]);
 
         // Enviar correo usando mailer "talleres"
-        Mail::mailer('talleres')
-            ->to($data['correo'])
+        Mail::to($data['correo'])
             ->send(new RegistroTallerMail($data));
 
         return response()->json([
