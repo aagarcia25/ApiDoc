@@ -21,8 +21,8 @@ class RegistroTallerMail extends Mailable
     {
         return $this
             ->from(
-                env('MAIL_FROM_ADDRESS'),
-                env('MAIL_FROM_NAME')
+                env('MAIL_TALLER_FROM'),
+                env('MAIL_TALLER_NAME')
             )
             ->subject('Registro - Taller de Integración')
             ->view('correo.taller')
