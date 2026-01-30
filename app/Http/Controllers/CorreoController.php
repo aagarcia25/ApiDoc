@@ -120,7 +120,7 @@ class CorreoController extends Controller
         // Validar límite
         $total = DB::table('correos')->count();
 
-        if ($total >= 160) {
+        if ($total >= 130) {
             return response()->json([
                 'ok' => false,
                 'message' => 'Ya no hay registros disponibles'
