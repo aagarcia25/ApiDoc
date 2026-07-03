@@ -202,7 +202,7 @@ class CorreoController extends Controller
             'aMaterno'     => 'nullable|string|max:255',
             'cargo'        => 'required|string|max:255',
             'ente'         => 'required|string|max:255',
-            'correo'       => 'required|email|max:255|unique:foro_registros,correo',
+            'correo'       => 'required|email|max:255|unique:correos_foro,correo',
             'telefono'     => 'required|string|max:30',
             'captchaToken' => 'required|string',
         ]);
