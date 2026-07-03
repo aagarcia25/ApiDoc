@@ -7,7 +7,9 @@ use App\Mail\EnviaPassMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use App\Mail\RegistroTallerMail;
+use App\Mail\RegistroForoMail;
 use Illuminate\Support\Facades\DB;
+use App\Models\Correos;
 
 
 
@@ -181,6 +183,61 @@ class CorreoController extends Controller
         return response()->json([
             'ok' => true,
             'message' => 'Registro enviado correctamente'
+        ]);
+    }
+    public function registroForo(Request $request)
+    {
+        // Validar límite
+        if (ForoRegistro::count() >= 1000) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Ya no hay registros disponibles'
+            ], 418);
+        }
+
+        // Validación
+        $data = $request->validate([
+            'nombre'       => 'required|string|max:255',
+            'aPaterno'     => 'required|string|max:255',
+            'aMaterno'     => 'nullable|string|max:255',
+            'cargo'        => 'required|string|max:255',
+            'ente'         => 'required|string|max:255',
+            'correo'       => 'required|email|max:255|unique:foro_registros,correo',
+            'telefono'     => 'required|string|max:30',
+            'captchaToken' => 'required|string',
+        ]);
+
+        // Crear registro
+        $registro = ForoRegistro::create([
+            'nombre'             => $data['nombre'],
+            'apellido_paterno'   => $data['aPaterno'],
+            'apellido_materno'   => $data['aMaterno'] ?? null,
+            'correo'             => $data['correo'],
+            'cargo'              => $data['cargo'],
+            'ente'               => $data['ente'],
+            'telefono'           => $data['telefono'],
+        ]);
+
+        try {
+            Mail::mailer('talleres')
+                ->to($registro->correo)
+                ->bcc([
+                    'jabustos@cecapmex.com',
+                    'foroestataldecontabilidad@nuevoleon.gob.mx',
+                ])
+                ->send(new RegistroForoMail($registro->toArray()));
+
+        } catch (\Throwable $e) {
+            $registro->delete();
+            return response()->json([
+                'ok' => false,
+                'message' => 'No se pudo enviar el correo',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+        return response()->json([
+            'ok' => true,
+            'message' => 'Registro enviado correctamente',
         ]);
     }
 

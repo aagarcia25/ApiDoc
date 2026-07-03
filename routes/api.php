@@ -38,6 +38,7 @@ Route::prefix('ApiDoc')->group(function () {
         Route::post('/envia-pass', [CorreoController::class, 'enviaPass']);
     });
     Route::post('/correo/registro-taller-de-integracion', [CorreoController::class, 'registroTaller']);
+    Route::post('/correo/registro-foro-contabilidad', [CorreoController::class, 'registroForo']);
 
 });
 

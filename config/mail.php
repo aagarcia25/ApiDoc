@@ -54,6 +54,10 @@ return [
             'password' => env('MAIL_TALLER_PASSWORD'),
             'timeout' => null,
             'local_domain' => env('MAIL_EHLO_DOMAIN'),
+            'from' => [
+                'address' => env('MAIL_TALLER_FROM'),
+                'name' => env('MAIL_TALLER_NAME'),
+            ],
         ],
 
         'ses' => [
