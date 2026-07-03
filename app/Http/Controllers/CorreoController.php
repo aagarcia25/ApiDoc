@@ -196,7 +196,7 @@ class CorreoController extends Controller
         }
 
         // Validación
-        $data = $request->validate([
+        $validator = Validator::make($request->all(), [
             'nombre'       => 'required|string|max:255',
             'aPaterno'     => 'required|string|max:255',
             'aMaterno'     => 'nullable|string|max:255',
@@ -206,6 +206,16 @@ class CorreoController extends Controller
             'telefono'     => 'required|string|max:30',
             'captchaToken' => 'required|string',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Datos inválidos.',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $data = $validator->validated();
 
         // Crear registro
         $registro = Correos::create([
