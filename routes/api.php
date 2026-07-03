@@ -3,6 +3,8 @@
 use App\Http\Controllers\FilesController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CorreoController;
+use App\Http\Controllers\ForoController;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,7 +41,13 @@ Route::prefix('ApiDoc')->group(function () {
     });
     Route::post('/correo/registro-taller-de-integracion', [CorreoController::class, 'registroTaller']);
     Route::post('/correo/registro-foro-contabilidad', [CorreoController::class, 'registroForo']);
-
+    Route::get('/foro-contabilidad/pdf/{id}', [ForoController::class, 'certificadoPdf'] );
+    Route::get('/foro-contabilidad/certificado/{id}',[ForoController::class, 'certificado']);
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::prefix('auth')->middleware('jwt.auth')->group(function () {
+        Route::get('/validate', [AuthController::class, 'validateToken']);
+        Route::post('/acceso/{id}', [ForoRegistroController::class, 'acceso']);
+    });
 });
 
 
