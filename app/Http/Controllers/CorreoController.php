@@ -222,8 +222,7 @@ class CorreoController extends Controller
             Mail::mailer('talleres')
                 ->to($registro->correo)
                 ->bcc([
-                    'jabustos@cecapmex.com',
-                    'foroestataldecontabilidad@nuevoleon.gob.mx',
+                    'jabustos@cecapmex.com'
                 ])
                 ->send(new RegistroForoMail($registro->toArray()));
 
