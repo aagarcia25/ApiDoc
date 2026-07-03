@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Mail\RegistroTallerMail;
 use App\Mail\RegistroForoMail;
 use Illuminate\Support\Facades\DB;
-use App\Models\Correos;
+use App\Correos;
 
 
 
