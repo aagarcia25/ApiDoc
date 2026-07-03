@@ -188,7 +188,7 @@ class CorreoController extends Controller
     public function registroForo(Request $request)
     {
         // Validar límite
-        if (ForoRegistro::count() >= 1000) {
+        if (Correos::count() >= 1000) {
             return response()->json([
                 'ok' => false,
                 'message' => 'Ya no hay registros disponibles'
@@ -208,7 +208,7 @@ class CorreoController extends Controller
         ]);
 
         // Crear registro
-        $registro = ForoRegistro::create([
+        $registro = Correos::create([
             'nombre'             => $data['nombre'],
             'apellido_paterno'   => $data['aPaterno'],
             'apellido_materno'   => $data['aMaterno'] ?? null,
