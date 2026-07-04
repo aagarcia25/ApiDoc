@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Firebase\JWT\JWT;
 use App\ForoUsuario;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
