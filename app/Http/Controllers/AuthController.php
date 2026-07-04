@@ -5,15 +5,29 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Firebase\JWT\JWT;
 use App\ForoUsuario;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        $data = $request->validate([
+        $validator = Validator::make($request->all(), [
             'usuario' => 'required|string',
             'password' => 'required|string',
+        ], [
+            'usuario.required' => 'El usuario es obligatorio.',
+            'password.required' => 'La contraseña es obligatoria.',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Error de validación.',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $data = $validator->validated();
 
         $usuario = ForoUsuario::where('usuario', $request->usuario)
             ->where('activo', true)
