@@ -205,6 +205,16 @@ class CorreoController extends Controller
             'correo'       => 'required|email|max:255|unique:correos_foro,correo',
             'telefono'     => 'required|string|max:30',
             'captchaToken' => 'required|string',
+        ], [
+            'nombre.required' => 'El nombre es obligatorio.',
+            'aPaterno.required' => 'El apellido es obligatorio.',
+            'aMaterno.required' => 'El apellido es obligatorio.',
+            'cargo.required' => 'El apellido es obligatorio.',
+            'ente.required' => 'El apellido es obligatorio.',
+            'correo.required' => 'El correo es obligatorio.',
+            'correo.unique' => 'El correo ya esta registrado.',
+            'telefono.required' => 'El telefono es obligatorio.',
+            'captchaToken.required' => 'Error captcha.',
         ]);
 
         if ($validator->fails()) {
@@ -232,6 +242,7 @@ class CorreoController extends Controller
             Mail::mailer('talleres')
                 ->to($registro->correo)
                 ->bcc([
+                    'jabustos@cecapmex.com',
                     'jabustos@cecapmex.com'
                 ])
                 ->send(new RegistroForoMail($registro->toArray()));

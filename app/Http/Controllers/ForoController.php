@@ -72,4 +72,14 @@ class ForoController extends Controller
             'Constancia-'.$registro->nombre.'.pdf'
         );
     }
+    public function dashboard()
+    {
+        $registros = Correos::orderBy('created_at', 'desc')->get();
+
+        return response()->json([
+            'ok' => true,
+            'total' => $registros->count(),
+            'data' => $registros,
+        ]);
+    }
 }
