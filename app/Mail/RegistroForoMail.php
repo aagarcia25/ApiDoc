@@ -24,7 +24,7 @@ class RegistroForoMail extends Mailable
                 env('MAIL_TALLER_FROM'),
                 env('MAIL_TALLER_NAME')
             )
-            ->subject('Registro - Foro Contabilidad')
+            ->subject('Registro - Foro Contabilidad Gubernamental')
             ->view('correo.foro')
             ->with($this->data);
     }

@@ -129,7 +129,7 @@
             </div>
 
             <div class="evento">
-                FORO ESTATAL DE CONTABILIDAD
+                FORO ESTATAL DE CONTABILIDAD GUBERNAMENTAL
             </div>
 
             <div class="texto">

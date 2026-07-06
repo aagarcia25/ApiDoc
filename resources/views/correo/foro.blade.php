@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Registro - Foro Estatal de Contabilidad</title>
+    <title>Registro - Foro Estatal de Contabilidad Gubernamental</title>
 </head>
 
 <body style="margin:0;padding:0;background:#f4f6f8;font-family:Arial,Helvetica,sans-serif;">
@@ -20,7 +20,7 @@
                         <td align="center" style="background:#0b4a7d;padding:25px;color:#ffffff;">
 
                             <h2 style="margin:0;">
-                                Foro Estatal de Contabilidad
+                                Foro Estatal de Contabilidad Gubernamental
                             </h2>
 
                             <p style="margin:8px 0 0 0;">
