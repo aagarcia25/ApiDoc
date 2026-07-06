@@ -20,7 +20,7 @@
                         <td align="center" style="background:#0b4a7d;padding:25px;color:#ffffff;">
 
                             <h2 style="margin:0;">
-                                Foro Estatal de Contabilidad Gubernamental
+                                Foro Estatal de Contabilidad
                             </h2>
 
                             <p style="margin:8px 0 0 0;">
@@ -113,7 +113,7 @@
 
                             <p style="text-align:center;">
 
-                                <a href="https://tesoreriavirtual.nl.gob.mx/foro-contabilidad/certificado/{{ $id }}"
+                                <a href="https://tesoreriavirtual.nl.gob.mx/foro-contabilidad/constancia/{{ $id }}"
                                     style="background:#0b4a7d;
                                       color:#ffffff;
                                       padding:12px 20px;
@@ -121,7 +121,7 @@
                                       border-radius:5px;
                                       display:inline-block;">
 
-                                    Descargar certificado
+                                    Descargar constancia
 
                                 </a>
 

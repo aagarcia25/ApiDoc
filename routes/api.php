@@ -43,7 +43,7 @@ Route::prefix('ApiDoc')->group(function () {
     Route::post('/correo/registro-taller-de-integracion', [CorreoController::class, 'registroTaller']);
     Route::post('/correo/registro-foro-contabilidad', [CorreoController::class, 'registroForo']);
     Route::get('/foro-contabilidad/pdf/{id}', [ForoController::class, 'certificadoPdf'] );
-    Route::get('/foro-contabilidad/certificado/{id}',[ForoController::class, 'certificado']);
+    Route::get('/foro-contabilidad/constancia/{id}',[ForoController::class, 'constancia']);
     Route::post('/login', [AuthController::class, 'login']);
     Route::prefix('auth')->middleware('jwt.auth')->group(function () {
         Route::get('/validate', [AuthController::class, 'validateToken']);
