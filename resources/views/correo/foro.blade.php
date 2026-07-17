@@ -99,7 +99,7 @@
 
                             <div style="text-align:center;margin:20px 0;">
 
-                                {!! QrCode::size(260)->margin(1)->generate('https://tesoreriavirtual.nl.gob.mx/foro-contabilidad/acceso/' . $id) !!}
+                                {!! QrCode::size(260)->margin(1)->generate('https://tesoreriavirtual.nl.gob.mx/jornada-auditoria-contabilidad-gubernamental/acceso/' . $id) !!}
 
                             </div>
 
@@ -113,7 +113,7 @@
 
                             <p style="text-align:center;">
 
-                                <a href="https://tesoreriavirtual.nl.gob.mx/foro-contabilidad/constancia/{{ $id }}"
+                                <a href="https://tesoreriavirtual.nl.gob.mx/jornada-auditoria-contabilidad-gubernamental/constancia/{{ $id }}"
                                     style="background:#0b4a7d;
                                       color:#ffffff;
                                       padding:12px 20px;

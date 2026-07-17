@@ -145,7 +145,9 @@
 
         <div class="qr">
 
-            {!! QrCode::format('svg')->size(160)->generate('https://tesoreriavirtual.nl.gob.mx/foro-contabilidad/constancia/' . $registro->id) !!}
+            {!! QrCode::format('svg')->size(160)->generate(
+                    'https://tesoreriavirtual.nl.gob.mx/jornada-auditoria-contabilidad-gubernamental/constancia/' . $registro->id,
+                ) !!}
 
             <div style="font-size:10px;margin-top:10px;">
                 Validación de constancia
