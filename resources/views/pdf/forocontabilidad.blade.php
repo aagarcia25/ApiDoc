@@ -129,7 +129,7 @@
             </div>
 
             <div class="evento">
-                FORO ESTATAL DE CONTABILIDAD GUBERNAMENTAL
+                Jornada de Auditoría y Contabilidad Gubernamental
             </div>
 
             <div class="texto">
