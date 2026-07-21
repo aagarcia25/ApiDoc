@@ -103,7 +103,20 @@
 
                             </div>
 
-                            <hr style="margin:35px 0;">
+                            <hr style="margin:33px 0;">
+
+                            <p>
+                                <b>FACPYA UANL: </b>Auditorio “Gumersindo Cantu” ubicado en FACPYA en Ciudad
+                                Universitaria, San Nicolás de los Garza C.P. 66455
+                            </p>
+                            <p>
+                                <b>Fecha: </b>Jueves 24 y Viernes 25 de Septiembre de 2026
+                            </p>
+                            <p>
+                                <b>Horario: </b>8:00 am a 2:00 pm
+                            </p>
+
+                            <hr style="margin:33px 0;">
 
                             <p>
                                 Una vez concluido y registradas sus asistencias de
