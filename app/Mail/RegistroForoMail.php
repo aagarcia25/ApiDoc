@@ -5,7 +5,8 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Writer\PngWriter;
 
 class RegistroForoMail extends Mailable
 {
@@ -20,12 +21,14 @@ class RegistroForoMail extends Mailable
 
     public function build()
     {
-        $this->data['qr'] = QrCode::format('png')
+        $result = Builder::create()
+            ->writer(new PngWriter())
+            ->data('https://tesoreriavirtual.nl.gob.mx/jornada-auditoria-contabilidad-gubernamental/acceso/' . $this->data['id'])
             ->size(260)
             ->margin(1)
-            ->generate(
-                'https://tesoreriavirtual.nl.gob.mx/jornada-auditoria-contabilidad-gubernamental/acceso/' . $this->data['id']
-            );
+            ->build();
+
+        $png = $result->getString();
 
         return $this
             ->from(
@@ -33,10 +36,13 @@ class RegistroForoMail extends Mailable
                 env('MAIL_TALLER_NAME')
             )
             ->subject('Registro - Jornada de Auditoría y Contabilidad Gubernamental')
-            ->view('correo.foro')
-            ->attachData($this->data['qr'], 'QR-Acceso.png', [
+            ->attachData($png, 'QR-Acceso.png', [
                 'mime' => 'image/png',
             ])
-            ->with($this->data);
+            ->with([
+                ...$this->data,
+                'qr' => $png,
+            ])
+            ->view('correo.foro');
     }
 }
