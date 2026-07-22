@@ -19,6 +19,13 @@ class RegistroForoMail extends Mailable
 
     public function build()
     {
+        $this->data['qr'] = QrCode::format('png')
+            ->size(260)
+            ->margin(1)
+            ->generate(
+                'https://tesoreriavirtual.nl.gob.mx/jornada-auditoria-contabilidad-gubernamental/acceso/' . $this->data['id']
+            );
+
         return $this
             ->from(
                 env('MAIL_TALLER_FROM'),
@@ -26,6 +33,9 @@ class RegistroForoMail extends Mailable
             )
             ->subject('Registro - Jornada de Auditoría y Contabilidad Gubernamental')
             ->view('correo.foro')
+            ->attachData($this->data['qr'], 'QR-Acceso.png', [
+                'mime' => 'image/png',
+            ])
             ->with($this->data);
     }
 }

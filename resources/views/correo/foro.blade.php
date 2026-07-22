@@ -99,7 +99,8 @@
 
                             <div style="text-align:center;margin:20px 0;">
 
-                                {!! QrCode::size(260)->margin(1)->generate('https://tesoreriavirtual.nl.gob.mx/jornada-auditoria-contabilidad-gubernamental/acceso/' . $id) !!}
+                                <img src="{{ $message->embedData($qr, 'QR-Acceso.png', 'image/png') }}" width="260"
+                                    height="260" alt="Código QR" style="display:block;margin:0 auto;">
 
                             </div>
 
