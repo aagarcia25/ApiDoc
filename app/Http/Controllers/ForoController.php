@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Correos;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ForoController extends Controller
 {
@@ -104,6 +105,9 @@ class ForoController extends Controller
                 ),
                 'acceso_jueves' => $registro->acceso_jueves,
                 'acceso_viernes' => $registro->acceso_viernes,
+                'puede_descargar_constancia' =>
+                    !is_null($registro->acceso_jueves) &&
+                    !is_null($registro->acceso_viernes)
             ]
         ]);
     }
