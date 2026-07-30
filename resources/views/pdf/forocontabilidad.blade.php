@@ -2,366 +2,198 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Reconocimiento - Foro Estatal de Contabilidad</title>
+    <meta charset="utf-8">
+
     <style>
+        @page {
+            size: letter landscape;
+            margin: 0;
+        }
+
+        html,
         body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
             font-family: DejaVu Sans, Helvetica, Arial, sans-serif;
         }
 
-        @page {
-            size: Letter landscape;
-            margin: 0;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            background: #e9e9e9;
-            font-family: 'Quicksand', Arial, Helvetica, sans-serif;
-            color: #111;
-        }
-
         .page {
-            width: 27.94cm;
-            height: 21.59cm;
-            margin: 0 auto;
-            background: #fff;
+            width: 1056px;
+            height: 816px;
             position: relative;
             overflow: hidden;
-            padding: 1.1cm 1.8cm 1.1cm 1.8cm;
-            page-break-after: always;
-        }
-
-        .header-left,
-        .header-center,
-        .header-right {
-            min-height: 3.2cm;
-            position: relative;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: flex-start;
-            justify-content: flex-start;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: flex-start;
-            justify-content: flex-end;
-        }
-
-        .logo-ceacnl {
-            width: 4.8cm;
-            height: auto;
-            object-fit: contain;
-            display: block;
-        }
-
-        .logo-placeholder {
-            width: 4.5cm;
-            height: 2.7cm;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #6b6b6b;
-            font-size: 10px;
-            text-align: center;
-        }
-
-        .logo-placeholder.ceacnl {
-            color: #11866f;
-            font-weight: 700;
-            font-size: 26px;
-            letter-spacing: 1px;
-            align-items: center;
-            justify-content: flex-start;
-            text-align: left;
-        }
-
-        .logo-placeholder.nl {
-            color: #d97855;
-            font-weight: 700;
-            font-size: 18px;
-            line-height: 1.15;
-            text-align: center;
-        }
-
-        .logo-estado-vertical {
-            width: 3cm;
-            height: auto;
-            object-fit: contain;
-            display: block;
-        }
-
-        .top-ribbon {
-            width: 9.5cm;
-            height: 2.25cm;
-            margin: -1.1cm auto 0 auto;
-            position: relative;
-            background: linear-gradient(180deg, #4e9eab 0%, #4f98a6 100%);
-            clip-path: polygon(0 0, 100% 0, 67% 65%, 50% 100%, 33% 65%);
-            opacity: .95;
-        }
-
-        .top-ribbon::after {
-            content: "";
-            position: absolute;
-            left: 1.2cm;
-            right: 1.2cm;
-            bottom: -0.35cm;
-            height: .85cm;
-            background: #527d8f;
-            clip-path: polygon(0 0, 100% 0, 80% 100%, 50% 100%, 20% 100%);
-            opacity: .85;
-            z-index: -1;
-        }
-
-        .content {
-            text-align: center;
-            padding-top: 1.4cm;
-        }
-
-        .institution {
-            font-size: 26px;
-            font-weight: 700;
-            letter-spacing: 0.6px;
-            line-height: 1.2;
-            text-transform: uppercase;
-        }
-
-        .grant-text {
-            font-size: 25px;
-            font-weight: 600;
-            margin-bottom: .8cm;
-            margin-top: .5cm;
         }
 
         .title {
-            font-size: 38px;
-            color: #539ca8;
-            font-weight: 800;
-            letter-spacing: 1px;
-            margin-bottom: 1.1cm;
-            text-transform: uppercase;
+            font-size: 42px;
+            color: #5A9FAC;
+            font-weight: bold;
         }
 
-        .recipient-row {
-            display: grid;
-            grid-template-columns: 1cm 1fr;
-            align-items: center;
-            gap: .35cm;
-            width: 22.5cm;
-            margin: 0 auto .15cm auto;
-            text-align: left;
+        .subtitle {
+            font-size: 31px;
+            font-weight: bold;
+        }
+
+        .text {
+            font-size: 24px;
+        }
+
+        .name {
+            font-size: 34px;
+            font-weight: bold;
+            color: #111;
+        }
+
+        .event {
+            font-size: 30px;
+            color: #5A9FAC;
+            font-weight: bold;
+        }
+
+        .date {
             font-size: 22px;
         }
-
-        .recipient-line {
-            height: .2cm;
-            border-bottom: 4px solid #559da8;
-            position: relative;
-            top: .15cm;
-        }
-
-        .recipient-line::before,
-        .recipient-line::after {
-            content: "";
-            position: absolute;
-            bottom: -4px;
-            width: 2cm;
-            height: 4px;
-            background: #559da8;
-        }
-
-        .recipient-line::before {
-            left: -.05cm;
-            clip-path: polygon(0 100%, 100% 0, 100% 100%);
-        }
-
-        .recipient-line::after {
-            right: -.05cm;
-            clip-path: polygon(0 0, 100% 100%, 0 100%);
-        }
-
-        .attendance {
-            font-size: 25px;
-            line-height: 1.35;
-            margin-top: .25cm;
-        }
-
-        .event-name {
-            color: #559da8;
-            font-size: 30px;
-            font-weight: 800;
-        }
-
-        .event-date {
-            font-size: 23px;
-            font-weight: 600;
-        }
-
-        /* Contenedor inferior dividido en 3 div */
-        .footer {
-            position: absolute;
-            left: 1.8cm;
-            right: 1.8cm;
-            bottom: 1cm;
-            display: grid;
-            grid-template-columns: 5.5cm 1fr 13cm;
-            align-items: end;
-            min-height: 5.2cm;
-        }
-
-        .footer-image-space,
-        .footer-blank-space,
-        .footer-date {
-            min-height: 5.2cm;
-        }
-
-        .footer-image-space {
-            display: flex;
-            align-items: flex-end;
-            justify-content: flex-start;
-        }
-
-        .fondo-superior {
-            width: 15cm;
-            height: auto;
-            display: block;
-            margin: -1.1cm auto 0 auto;
-            object-fit: contain;
-        }
-
-        .image-box {
-            width: 4cm;
-            height: 4cm;
-            border: 1.5px dashed #bdbdbd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #9a9a9a;
-            font-size: 12px;
-            text-align: center;
-            padding: .3cm;
-        }
-
-        .footer-blank-space {
-            background: transparent;
-        }
-
-        .footer-date {
-            display: flex;
-            align-items: flex-end;
-            justify-content: flex-end;
-            text-align: right;
-            font-size: 14px;
-            font-weight: 500;
-            padding-bottom: .1cm;
-            white-space: nowrap;
-        }
-
-        @media print {
-            body {
-                background: #fff;
-            }
-
-            .page {
-                margin: 0;
-                box-shadow: none;
-            }
-
-            .image-box {
-                border-color: #d0d0d0;
-            }
-
-            .qr {
-                width: 4cm;
-                height: 4cm;
-            }
-
-            .qr img {
-                width: 100%;
-                height: 100%;
-            }
-        }
     </style>
+
 </head>
 
 <body>
-    <main class="page">
-        <table width="100%">
+
+    <div class="page">
+
+        <table width="100%" cellspacing="0" cellpadding="0" style="margin-top:25px;">
             <tr>
 
-                <td width="30%">
-                    <img src="{{ public_path('images/CEACNL.png') }}" alt="CEACNL" class="logo-ceacnl">
+                <td width="25%" align="left" style="padding-left:35px;">
+                    <img src="{{ public_path('images/CEACNL.png') }}" width="180">
                 </td>
 
-                <td width="40%" align="center">
-                    <img src="{{ public_path('images/fondo.png') }}" alt="Fondo" class="fondo-superior">
+                <td width="50%" align="center">
+                    <img src="{{ public_path('images/fondo.png') }}" width="330">
                 </td>
 
-                <td width="30%" align="right">
-                    <img src="{{ public_path('images/logo_estado_vertical.png') }}" alt="Estado"
-                        class="logo-estado-vertical">
+                <td width="25%" align="right" style="padding-right:35px;">
+                    <img src="{{ public_path('images/logo_estado_vertical.png') }}" width="110">
                 </td>
 
             </tr>
         </table>
 
-        <section class="content">
-            <div class="institution">
-                EL CONSEJO ESTATAL DE ARMONIZACIÓN CONTABLE<br>
-                DEL ESTADO DE NUEVO LEÓN
-            </div>
+        <table width="100%" cellspacing="0" cellpadding="0" style="margin-top:25px;">
 
-            <div class="grant-text">otorga el presente</div>
-
-            <div class="title">RECONOCIMIENTO</div>
-
-            <div class="recipient-row">
-                <div>A:</div>
-                <div
-                    style="margin-top:15px;
-                        font-size:30px;
-                        font-weight:bold;
-                        text-align:center;
-                        text-transform:uppercase;">
-                    {{ ucwords(mb_strtolower(trim($registro->nombre . ' ' . $registro->apellido_paterno . ' ' . $registro->apellido_materno), 'UTF-8')) }}
-                </div>
-            </div>
-
-            <div class="attendance">
-                <div style="font-weight: 600;">Por su asistencia a la</div>
-                <div class="event-name">Jornada de Auditoría y Contabilidad Gubernamental</div>
-                <div class="event-date">realizado el 24 y 25 de septiembre del 2026.</div>
-            </div>
-        </section>
-
-        <table width="100%" style="margin-top:70px;">
             <tr>
-
-                <td width="20%">
-                    <img src="data:image/png;base64,{{ $qr }}" width="120">
+                <td align="center" class="subtitle">
+                    EL CONSEJO ESTATAL DE ARMONIZACIÓN CONTABLE
                 </td>
+            </tr>
 
-                <td width="40%">
-                    &nbsp;
+            <tr>
+                <td align="center" class="subtitle">
+                    DEL ESTADO DE NUEVO LEÓN
                 </td>
+            </tr>
 
-                <td width="40%" align="right">
+            <tr>
+                <td height="30"></td>
+            </tr>
+
+            <tr>
+                <td align="center" style="font-size:26px;">
+                    otorga el presente
+                </td>
+            </tr>
+
+            <tr>
+                <td height="25"></td>
+            </tr>
+
+            <tr>
+                <td align="center" class="title">
+                    RECONOCIMIENTO
+                </td>
+            </tr>
+
+            <tr>
+                <td height="40"></td>
+            </tr>
+
+            <tr>
+                <td align="center">
+
+                    <table width="820" cellspacing="0" cellpadding="0">
+
+                        <tr>
+
+                            <td width="45" style="font-size:24px;">
+                                A:
+                            </td>
+
+                            <td style="border-bottom:4px solid #5A9FAC;"></td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td></td>
+
+                            <td align="center" class="name" style="padding-top:12px;">
+
+                                {{ ucwords(
+                                    mb_strtolower(
+                                        trim($registro->nombre . ' ' . $registro->apellido_paterno . ' ' . $registro->apellido_materno),
+                                        'UTF-8',
+                                    ),
+                                ) }}
+
+                            </td>
+
+                        </tr>
+
+                    </table>
+
+                </td>
+            </tr>
+
+            <tr>
+                <td height="30"></td>
+            </tr>
+
+            <tr>
+                <td align="center" class="text">
+                    Por su asistencia a la
+                </td>
+            </tr>
+
+            <tr>
+                <td align="center" class="event">
+                    Jornada de Auditoría y Contabilidad Gubernamental
+                </td>
+            </tr>
+
+            <tr>
+                <td align="center" class="date">
+                    realizada el 24 y 25 de septiembre del 2026.
+                </td>
+            </tr>
+
+        </table>
+        <table width="100%" cellspacing="0" cellpadding="0"
+            style="position:absolute;left:35px;bottom:35px;width:986px;">
+            <tr>
+                <td width="180" valign="bottom">
+                    <img src="data:image/png;base64,{{ $qr }}" width="130" height="130">
+                </td>
+                <td></td>
+                <td width="350" align="right" style="font-size:18px;">
                     Ciudad Universitaria, Nuevo León<br>
                     25 de septiembre de 2026
                 </td>
-
             </tr>
         </table>
-    </main>
+    </div>
 </body>
 
 </html>
