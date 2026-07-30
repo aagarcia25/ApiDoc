@@ -4,10 +4,12 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet">
     <title>Reconocimiento - Foro Estatal de Contabilidad</title>
     <style>
+        body {
+            font-family: DejaVu Sans, Helvetica, Arial, sans-serif;
+        }
+
         @page {
             size: Letter landscape;
             margin: 0;
@@ -33,15 +35,6 @@
             overflow: hidden;
             padding: 1.1cm 1.8cm 1.1cm 1.8cm;
             page-break-after: always;
-        }
-
-        /* Contenedor superior dividido en 3 div */
-        .header {
-            display: grid;
-            grid-template-columns: 1fr 1.4fr 1fr;
-            align-items: start;
-            width: 100%;
-            height: 3.2cm;
         }
 
         .header-left,
@@ -286,25 +279,40 @@
             .image-box {
                 border-color: #d0d0d0;
             }
+
+            .qr {
+                width: 4cm;
+                height: 4cm;
+            }
+
+            .qr img {
+                width: 100%;
+                height: 100%;
+            }
         }
     </style>
 </head>
 
 <body>
     <main class="page">
-        <section class="header">
-            <div class="header-left">
-                <img src="{{ public_path('images/CEACNL.png') }}" alt="CEACNL" class="logo-ceacnl">
-            </div>
-            <div class="header-center">
-                <img src="{{ public_path('images/fondo.png') }}" alt="Fondo" class="fondo-superior">
-            </div>
+        <table width="100%">
+            <tr>
 
-            <div class="header-right">
-                <img src="{{ public_path('images/logo_estado_vertical.png') }}" alt="Estado"
-                    class="logo-estado-vertical">
-            </div>
-        </section>
+                <td width="30%">
+                    <img src="{{ public_path('images/CEACNL.png') }}" alt="CEACNL" class="logo-ceacnl">
+                </td>
+
+                <td width="40%" align="center">
+                    <img src="{{ public_path('images/fondo.png') }}" alt="Fondo" class="fondo-superior">
+                </td>
+
+                <td width="30%" align="right">
+                    <img src="{{ public_path('images/logo_estado_vertical.png') }}" alt="Estado"
+                        class="logo-estado-vertical">
+                </td>
+
+            </tr>
+        </table>
 
         <section class="content">
             <div class="institution">
@@ -318,21 +326,13 @@
 
             <div class="recipient-row">
                 <div>A:</div>
-                <div class="recipient-line">
-                    <div
-                        style="
-                            position:absolute;
-                            width:100%;
-                            top:-20px;
-                            left:0;
-                            text-align:center;
-                            font-size:30px;
-                            font-weight:700;
-                            color:#000;
-                            text-transform:uppercase;
-                        ">
-                        {{ ucwords(trim($registro->nombre . ' ' . $registro->apellido_paterno . ' ' . $registro->apellido_materno)) }}
-                    </div>
+                <div
+                    style="margin-top:15px;
+                        font-size:30px;
+                        font-weight:bold;
+                        text-align:center;
+                        text-transform:uppercase;">
+                    {{ ucwords(mb_strtolower(trim($registro->nombre . ' ' . $registro->apellido_paterno . ' ' . $registro->apellido_materno), 'UTF-8')) }}
                 </div>
             </div>
 
@@ -343,29 +343,24 @@
             </div>
         </section>
 
-        <section class="footer">
-            <div class="footer-image-space">
-                <div style="width:4cm;height:4cm;">
-                    <img src="data:image/png;base64,{{ $qr }}" style="width:4cm;height:4cm;">
-                </div>
-                <div
-                    style="
-                            position:absolute;
-                            right:0;
-                            bottom:-18px;
-                            font-size:11px;
-                            color:#666;
-                        ">
-                    Folio: {{ $registro->id }}
-                </div>
-            </div>
+        <table width="100%" style="margin-top:70px;">
+            <tr>
 
-            <div class="footer-blank-space"></div>
+                <td width="20%">
+                    <img src="data:image/png;base64,{{ $qr }}" width="120">
+                </td>
 
-            <div class="footer-date">
-                Ciudad Universitaria, Nuevo León, 25 de septiembre del 2026
-            </div>
-        </section>
+                <td width="40%">
+                    &nbsp;
+                </td>
+
+                <td width="40%" align="right">
+                    Ciudad Universitaria, Nuevo León<br>
+                    25 de septiembre de 2026
+                </td>
+
+            </tr>
+        </table>
     </main>
 </body>
 
