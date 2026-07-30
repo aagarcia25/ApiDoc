@@ -80,9 +80,15 @@ class ForoController extends Controller
 
         $qr = $result->getString();
 
-        return Pdf::loadView(
+        $pdf = Pdf::loadView(
             'pdf.forocontabilidad',
-            compact('registro','qr')
+            compact('registro', 'qr')
+        );
+
+        $pdf->setPaper('letter', 'landscape');
+
+        return $pdf->download(
+            'Constancia-'.$registro->nombre.'.pdf'
         );
     }
     public function dashboard()
