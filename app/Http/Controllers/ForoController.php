@@ -64,13 +64,6 @@ class ForoController extends Controller
             abort(403, 'El participante no cumple con la asistencia requerida.');
         }
 
-        $pdf = Pdf::loadView(
-            'pdf.forocontabilidad',
-            compact('registro')
-        );
-
-        $pdf->setPaper('letter', 'landscape');
-
         $result = Builder::create()
             ->writer(new PngWriter())
             ->data('https://tesoreriavirtual.nl.gob.mx/jornada-auditoria-contabilidad-gubernamental/constancia/' . $id)
@@ -78,7 +71,7 @@ class ForoController extends Controller
             ->margin(1)
             ->build();
 
-        $qr = $result->getString();
+        $qr = base64_encode($result->getString());
 
         $pdf = Pdf::loadView(
             'pdf.forocontabilidad',

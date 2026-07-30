@@ -346,7 +346,7 @@
         <section class="footer">
             <div class="footer-image-space">
                 <div style="width:4cm;height:4cm;">
-                    {!! QrCode::size(220)->margin(1)->generate(url('/foro-contabilidad/constancia/' . $registro->id)) !!}
+                    <img src="data:image/png;base64,{{ $qr }}" style="width:4cm;height:4cm;">
                 </div>
                 <div
                     style="
