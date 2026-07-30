@@ -73,8 +73,8 @@ class ForoController extends Controller
 
         $result = Builder::create()
             ->writer(new PngWriter())
-            ->data('https://tesoreriavirtual.nl.gob.mx/jornada-auditoria-contabilidad-gubernamental/acceso/' . $this->data['id'])
-            ->size(260)
+            ->data('https://tesoreriavirtual.nl.gob.mx/jornada-auditoria-contabilidad-gubernamental/constancia/' . $id)
+            ->size(220)
             ->margin(1)
             ->build();
 
