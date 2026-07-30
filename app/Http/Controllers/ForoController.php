@@ -82,4 +82,29 @@ class ForoController extends Controller
             'data' => $registros,
         ]);
     }
+    public function participante($id)
+    {
+        $registro = Correos::find($id);
+
+        if (!$registro) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Registro no encontrado'
+            ], 404);
+        }
+
+        return response()->json([
+            'ok' => true,
+            'registro' => [
+                'id' => $registro->id,
+                'nombre_completo' => trim(
+                    $registro->nombre . ' ' .
+                    $registro->apellido_paterno . ' ' .
+                    $registro->apellido_materno
+                ),
+                'acceso_jueves' => $registro->acceso_jueves,
+                'acceso_viernes' => $registro->acceso_viernes,
+            ]
+        ]);
+    }
 }

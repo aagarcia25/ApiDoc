@@ -49,6 +49,7 @@ Route::prefix('ApiDoc')->group(function () {
         Route::get('/validate', [AuthController::class, 'validateToken']);
         Route::get('/dashboard', [ForoController::class, 'dashboard']);
         Route::post('/acceso/{id}', [ForoController::class, 'acceso']);
+        Route::get('/participante/{id}', [ForoController::class, 'participante']);
     });
 });
 
