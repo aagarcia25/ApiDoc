@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Correos;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Writer\PngWriter;
 
 class ForoController extends Controller
 {
@@ -69,8 +71,18 @@ class ForoController extends Controller
 
         $pdf->setPaper('letter', 'landscape');
 
-        return $pdf->stream(
-            'Constancia-'.$registro->nombre.'.pdf'
+        $result = Builder::create()
+            ->writer(new PngWriter())
+            ->data('https://tesoreriavirtual.nl.gob.mx/jornada-auditoria-contabilidad-gubernamental/acceso/' . $this->data['id'])
+            ->size(260)
+            ->margin(1)
+            ->build();
+
+        $qr = $result->getString();
+
+        return Pdf::loadView(
+            'pdf.forocontabilidad',
+            compact('registro','qr')
         );
     }
     public function dashboard()
