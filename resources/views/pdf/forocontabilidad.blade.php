@@ -33,7 +33,7 @@
         }
 
         .subtitle {
-            font-size: 24px;
+            font-size: 26px;
             font-weight: bold;
         }
 
@@ -79,7 +79,9 @@
         </table>
 
         <table width="100%" cellspacing="0" cellpadding="0" style="margin-top:25px;">
-
+            <tr>
+                <td height="20"></td>
+            </tr>
             <tr>
                 <td align="center" class="subtitle">
                     EL CONSEJO ESTATAL DE ARMONIZACIÓN CONTABLE
@@ -127,7 +129,7 @@
                                 style="
                         border-bottom:2px solid #5A9FAC;
                         text-align:center;
-                        font-size:24px;
+                        font-size:25px;
                         font-weight:bold;
                     ">
                                 {{ ucwords(
