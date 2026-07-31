@@ -27,22 +27,22 @@
         }
 
         .title {
-            font-size: 42px;
+            font-size: 32px;
             color: #5A9FAC;
             font-weight: bold;
         }
 
         .subtitle {
-            font-size: 31px;
+            font-size: 24px;
             font-weight: bold;
         }
 
         .text {
-            font-size: 24px;
+            font-size: 21px;
         }
 
         .name {
-            font-size: 34px;
+            font-size: 24px;
             font-weight: bold;
             color: #111;
         }
@@ -66,19 +66,15 @@
 
         <table width="100%" cellspacing="0" cellpadding="0" style="margin-top:25px;">
             <tr>
-
                 <td width="25%" align="left" style="padding-left:35px;">
                     <img src="{{ public_path('images/CEACNL.png') }}" width="180">
                 </td>
-
                 <td width="50%" align="center">
                     <img src="{{ public_path('images/fondo.png') }}" width="330">
                 </td>
-
                 <td width="25%" align="right" style="padding-right:35px;">
                     <img src="{{ public_path('images/logo_estado_vertical.png') }}" width="110">
                 </td>
-
             </tr>
         </table>
 
