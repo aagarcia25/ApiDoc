@@ -122,4 +122,36 @@ class ForoController extends Controller
             ]
         ]);
     }
+
+    public function constancia($id)
+    {
+        $registro = Correos::find($id);
+
+        if (!$registro) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Registro no encontrado.'
+            ], 404);
+        }
+
+        if (!$registro->acceso_jueves || !$registro->acceso_viernes) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'El participante no cumple con la asistencia requerida.'
+            ], 403);
+        }
+
+        return response()->json([
+            'ok' => true,
+            'message' => 'El participante cumple con la asistencia requerida.',
+            'registro' => [
+                'id' => $registro->id,
+                'nombre' => $registro->nombre,
+                'apellido_paterno' => $registro->apellido_paterno,
+                'apellido_materno' => $registro->apellido_materno,
+                'acceso_jueves' => $registro->acceso_jueves,
+                'acceso_viernes' => $registro->acceso_viernes,
+            ]
+        ]);
+    }
 }

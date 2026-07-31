@@ -20,8 +20,8 @@
         }
 
         .page {
-            width: 1056px;
-            height: 816px;
+            width: 100%;
+            height: 100%;
             position: relative;
             overflow: hidden;
         }
@@ -48,7 +48,7 @@
         }
 
         .event {
-            font-size: 30px;
+            font-size: 24px;
             color: #5A9FAC;
             font-weight: bold;
         }
@@ -64,16 +64,16 @@
 
     <div class="page">
 
-        <table width="100%" cellspacing="0" cellpadding="0" style="margin-top:25px;">
+        <table width="100%" cellspacing="0" cellpadding="0" style="margin-top:0px;">
             <tr>
-                <td width="25%" align="left" style="padding-left:35px;">
-                    <img src="{{ public_path('images/CEACNL.png') }}" width="180">
+                <td width="25%" align="left" style="padding-left:35px; padding-top: 25px;">
+                    <img src="{{ public_path('images/CEACNL.png') }}" height="70">
                 </td>
                 <td width="50%" align="center">
-                    <img src="{{ public_path('images/fondo.png') }}" width="330">
+                    <img src="{{ public_path('images/fondo.png') }}" height="105">
                 </td>
-                <td width="25%" align="right" style="padding-right:35px;">
-                    <img src="{{ public_path('images/logo_estado_vertical.png') }}" width="110">
+                <td width="25%" align="right" style="padding-right:35px; padding-top: 25px;">
+                    <img src="{{ public_path('images/logo_estado_vertical.png') }}" height="70">
                 </td>
             </tr>
         </table>
@@ -91,21 +91,14 @@
                     DEL ESTADO DE NUEVO LEÓN
                 </td>
             </tr>
-
-            <tr>
-                <td height="30"></td>
-            </tr>
-
             <tr>
                 <td align="center" style="font-size:26px;">
                     otorga el presente
                 </td>
             </tr>
-
             <tr>
-                <td height="25"></td>
+                <td height="5"></td>
             </tr>
-
             <tr>
                 <td align="center" class="title">
                     RECONOCIMIENTO
@@ -115,77 +108,85 @@
             <tr>
                 <td height="40"></td>
             </tr>
-
             <tr>
                 <td align="center">
 
-                    <table width="820" cellspacing="0" cellpadding="0">
-
+                    <table width="620" cellspacing="0" cellpadding="0" align="center"
+                        style="margin-left:auto; margin-right:auto;">
                         <tr>
 
-                            <td width="45" style="font-size:24px;">
+                            <td width="45"
+                                style="
+                        font-size:24px;
+                        text-align:left;
+                    ">
                                 A:
                             </td>
 
-                            <td style="border-bottom:4px solid #5A9FAC;"></td>
-
-                        </tr>
-
-                        <tr>
-
-                            <td></td>
-
-                            <td align="center" class="name" style="padding-top:12px;">
-
+                            <td
+                                style="
+                        border-bottom:2px solid #5A9FAC;
+                        text-align:center;
+                        font-size:24px;
+                        font-weight:bold;
+                    ">
                                 {{ ucwords(
                                     mb_strtolower(
                                         trim($registro->nombre . ' ' . $registro->apellido_paterno . ' ' . $registro->apellido_materno),
                                         'UTF-8',
                                     ),
                                 ) }}
-
                             </td>
 
                         </tr>
-
                     </table>
 
                 </td>
             </tr>
-
             <tr>
                 <td height="30"></td>
             </tr>
-
             <tr>
                 <td align="center" class="text">
                     Por su asistencia a la
                 </td>
             </tr>
-
             <tr>
                 <td align="center" class="event">
                     Jornada de Auditoría y Contabilidad Gubernamental
                 </td>
             </tr>
-
             <tr>
                 <td align="center" class="date">
                     realizada el 24 y 25 de septiembre del 2026.
                 </td>
             </tr>
-
-        </table>
-        <table width="100%" cellspacing="0" cellpadding="0"
-            style="position:absolute;left:35px;bottom:35px;width:986px;">
             <tr>
-                <td width="180" valign="bottom">
-                    <img src="data:image/png;base64,{{ $qr }}" width="130" height="130">
+                <td height="30"></td>
+            </tr>
+        </table>
+        <table width="100%" cellspacing="0" cellpadding="0">
+            <tr>
+
+                <td width="200" valign="bottom" style="padding-left:30px;">
+                    <img src="data:image/png;base64,{{ $qr }}" width="100" height="100">
                 </td>
+
                 <td></td>
-                <td width="350" align="right" style="font-size:18px;">
-                    Ciudad Universitaria, Nuevo León<br>
-                    25 de septiembre de 2026
+                <td></td>
+
+
+
+            </tr>
+            <tr>
+                <td style="padding-left:30px; font-size:12px;">{{ $registro->id }}</td>
+                <td></td>
+                <td width="350" align="right" valign="bottom"
+                    style="
+                    font-size:12px;
+                    padding-right:30px;
+                ">
+                    Ciudad Universitaria, Nuevo León, 25 de septiembre de 2026
                 </td>
             </tr>
         </table>
